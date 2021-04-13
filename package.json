@@ -74,17 +74,10 @@
     "webpack-shell-plugin": "^0.5.0"
   },
   "scripts": {
-    "cssd": "tcm ./src/web/",
-    "build": "npm run cssd && tsc && npm run format",
-    "test": "mocha --inline-diffs --require ts-node/register --recursive test/**/*Spec.ts",
-    "testit": "mocha --inline-diffs --require ts-node/register",
-    "format": "prettier --write \"{src,test}/**/*.{js,ts,css}\" \"./*.{js,ts,css}\"",
-    "buildUnicode": "ts-node src/tools/buildUnicode.ts && npm run format && npm run build",
-    "prepare": "npm run build"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run build"
-    }
+    "build:pro": "webpack --mode production --progress",
+    "build:umd": "npm run build:pro",
+    "build:lib": "rm -rf lib && npx tsc -b tsconfig.build.json",
+    "build:esm": "rm -rf es && npx tsc -p tsconfig.build.json -m es2015 --outDir es",
+    "build": "npm run build:umd && npm run build:lib && npm run build:esm"
   }
 }
