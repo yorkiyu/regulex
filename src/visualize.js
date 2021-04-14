@@ -1,5 +1,6 @@
-if (typeof define !== 'function') var define = require('amdefine')(module);
-define(['./Kit','./parse'],function (K,parse) {
+import K from './Kit';
+import parse from './parse';
+
 parse.exportConstants();
 
 var FONT_SIZE=16,LABEL_FONT_SIZE=14,PATH_LEN=16,BG_COLOR='#EEE',
@@ -812,6 +813,4 @@ function onlyCharClass(node) {
   return !node.chars && !node.ranges.length && node.classes.length===1;
 }
 
-return visualize;
-
-});
+export default visualize;

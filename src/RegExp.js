@@ -1,5 +1,7 @@
-if (typeof define !== 'function') var define = require('amdefine')(module);
-define(['./parse','./Kit','./NFA'],function (parse,K,NFA) {
+import NFA from './NFA';
+import K from './Kit';
+import parse from './parse';
+
 /**
 Mock RegExp class
 */
@@ -379,6 +381,4 @@ function _readonly(obj,attrs) {
   });
 }
 
-return RegExp;
-
-});
+export default RegExp;

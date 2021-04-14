@@ -1,5 +1,3 @@
-if (typeof define !== 'function') var define = require('amdefine')(module);
-define(function () {
 /*Kit*/
 
 var AP=Array.prototype,
@@ -381,17 +379,23 @@ function locals(f) {
   return '{\n'+methods.join(',\n')+'\n}';
 }
 
-return {
-  sortUnique:sortUnique,
-  idUnique:idUnique,hashUnique:hashUnique,
-  Set:Set, repeats:repeats,
-  negate:negate,coalesce:coalesce,
-  classify:classify,
-  parseCharset:parseCharset,
-  chr:chr,ord:ord,pred:pred,succ:succ,toPrint:toPrint,
-  flatten2:flatten2,
-  log:log,isBrowser:isBrowser,
-  locals:locals
+export default {
+  sortUnique,
+  idUnique,
+  hashUnique,
+  Set,
+  repeats,
+  negate,
+  coalesce,
+  classify,
+  parseCharset,
+  chr,
+  ord,
+  pred,
+  succ,
+  toPrint,
+  flatten2,
+  log,
+  isBrowser,
+  locals
 };
-
-});

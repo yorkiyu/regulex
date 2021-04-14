@@ -1,5 +1,6 @@
-if (typeof define !== 'function') var define = require('amdefine')(module);
-define(['./NFA','./Kit'],function (NFA,K) {
+import NFA from './NFA';
+import K from './Kit';
+
 /**
 Parse Regex to AST
 parse:Function(re:String)
@@ -980,6 +981,4 @@ var config={
   ]
 };
 
-
-return parse;
-});
+export default parse;
