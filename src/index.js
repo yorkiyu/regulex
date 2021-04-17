@@ -1,3 +1,4 @@
+export * from './constants';
 import Kit from './Kit';
 import NFA from './NFA';
 import RegExp from './RegExp';

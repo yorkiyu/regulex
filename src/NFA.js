@@ -4,7 +4,7 @@ import K from './Kit';
 A Naive NFA Implementation
 
 Start state is always named 'start'
-@param {NFAConfig|CompactNFAConfig} a
+ a
 type NFAConfig = {compact:false,accepts:StateSet,trans:[Transition]}
 type State = String
 type StateSet = [State]
@@ -52,13 +52,10 @@ An automaton used to recognize triples:{
   ]
 };
 
-@return {
-  input:Function
-}
 */
 function NFA(a) {
   a=a.compact?structure(a):a;
-  var accepts={},i,trans=a.trans,
+  var accepts={},i,n,trans=a.trans,
       // FMap={toState:Function}
       router={/*
         fromState : {
@@ -279,7 +276,7 @@ function cmpRange(c,rg) {
 
 /**
 Convert CompactNFAConfig to NFAConfig
-@param {CompactNFAConfig} a
+ a
 type CompactNFAConfig={compact:true,accepts:CompactStateSet,trans:[CompactTransition]}
 type CompactStateSet = StateSet.join(",")
 type CompactTransition = [CompactStateMap,Charset,Action,Assert]

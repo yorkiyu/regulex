@@ -1,31 +1,21 @@
+import {
+  CHARSET_NODE,
+  BACKREF_NODE,
+  CHOICE_NODE,
+  AssertLookahead,
+  AssertNegativeLookahead,
+  ASSERT_NODE,
+  GROUP_NODE,
+  AssertWordBoundary,
+  AssertNonWordBoundary,
+  AssertEnd,
+  AssertBegin,
+  DOT_NODE,
+  EXACT_NODE,
+  EMPTY_NODE,
+} from './constants';
 import NFA from './NFA';
 import K from './Kit';
-
-/**
-Parse Regex to AST
-parse:Function(re:String)
-parse.Constants
-parse.exportConstants:Function
-*/
-
-var Constants={
-  //Node Type Constants
-  EXACT_NODE:"exact",
-  CHARSET_NODE:"charset",
-  CHOICE_NODE:"choice",
-  GROUP_NODE:"group",
-  ASSERT_NODE:"assert",
-  DOT_NODE:"dot",
-  BACKREF_NODE:"backref",
-  EMPTY_NODE:"empty",
-  //Assertion Type Constants
-  AssertLookahead:"AssertLookahead",
-  AssertNegativeLookahead:"AssertNegativeLookahead",
-  AssertNonWordBoundary:"AssertNonWordBoundary",
-  AssertWordBoundary:"AssertWordBoundary",
-  AssertEnd:"AssertEnd",
-  AssertBegin:"AssertBegin"
-};
 
 /**
 AST:
@@ -100,25 +90,14 @@ AST:
 
 */
 
-function exportConstants() {
-  var code=Object.keys(Constants).map(function (k) {
-    return k+"="+JSON.stringify(Constants[k]);
-  }).join(";");
-  var Global=(function () {
-    return this;
-  })();
-  Global.eval(code);
-}
-exportConstants();
-
 function AST(a) {
   this.raw=a.raw;
   this.tree=a.tree;
   this.groupCount=a.groupCount;
 }
 /**
-@param {Function} f   Visitor function accept node as one argument.
-@param {String} nodeType Give the node type you want to visit,or omitted to visit all
+ f   Visitor function accept node as one argument.
+ nodeType Give the node type you want to visit,or omitted to visit all
 */
 AST.prototype.traverse=function (f,nodeType) {
   travel(this.tree,f);
@@ -134,11 +113,11 @@ AST.prototype.traverse=function (f,nodeType) {
 
 var G_DEBUG;
 /**
-@param {String}  re  input regex as string
-@param {Object} [options]
+  re  input regex as string
+ [options]
   @option {Boolean} options.debug   If enable debug log
   @option {Boolean} options.strict  If enable strict mode
-@return {Object}
+
 {
   raw:String,     // original re
   groupCount:Int, //Total group count
@@ -257,8 +236,6 @@ function parse(re,_debug) {
 
 }
 
-parse.Constants=Constants;
-parse.exportConstants=exportConstants;
 parse.RegexSyntaxError=RegexSyntaxError;
 parse.getNFAParser=getNFAParser;
 

@@ -2,17 +2,15 @@
 
 var AP=Array.prototype,
     slice=AP.slice,
-    isBrowser=(function () {
-      return this.toString()==="[object Window]";
-    })();
+    isBrowser=(function (_this) {
+      return _this?.toString()==="[object Window]";
+    })(window);
 
 
 /**
 Build sorted Set from array.
 This function will corrupt the original array
 Proper usage:a=Set(a);
-@param {ArrayLike} a
-@return {Set} return new ArrayLike Set
 */
 function Set(a,_sorted) {
   if (a._Set) return a;
@@ -26,8 +24,7 @@ function Set(a,_sorted) {
   a.toArray=function () {return copyArray(a);};
 
   /** Union with another Set
-  @param {Set|Array} b If b is an array,it will be corrupted by sortUnqiue
-  @return {Set} return new Set */
+   return new Set */
   a.union=function (b) {
     b=Set(b);
     var n=a.length+b.length,c=new a.constructor(n);
@@ -68,8 +65,8 @@ function bsearch(a,x,cmp) {
 Return sorted Set.
 This function will corrupt the original array
 Proper usage: a=sortUnique(a);
-@param {ArrayLike} a
-@return {ArrayLike} new unique sorted array
+ a
+ new unique sorted array
 */
 function sortUnique(a) {
   var n=a.length;
@@ -124,7 +121,7 @@ function hashUnique(a) {
 Object id unique.
 This function will corrupt the original array.
 Correct usage: a=idUnique(a);
-@param {[Object]} NonPrimitive Array
+ NonPrimitive Array
 */
 function idUnique(a) {
   var i,j,l=a.length,p,
@@ -148,8 +145,8 @@ function idUnique(a) {
 
 /**
 Classify charsets to non-overlapping sorted disjoint ranges.
-@param {[Range]}
-@return {ranges:DisjointRanges,map:OriginalRangesToDisjoinRangesMap}
+
+
 Example: classify(['az','09','a','bb']) => {
   ranges:['a','b','cz','09'],
   map:{'az':['a','b','cz'],'09':['09'],'a':['a'],'b':['b']}
@@ -251,7 +248,7 @@ function ____classify(ranges) {
 /**
 Convert exclude ranges to include ranges
 Example: ^b-y, ['by'] to ["\0a","z\uffff"]
-@param {[Range]}
+
 @return Sorted disjoint ranges
 */
 function negate(ranges /*:[Range rg]*/) {
@@ -280,8 +277,8 @@ function negate(ranges /*:[Range rg]*/) {
 /**
 Parse simple regex style charset string like '^a-bcdf' to disjoint ranges.
 Character classes like "\w\s" are not supported!
-@param {String} charset  Valid regex charset [^a-z0-9_] input as "^a-z0-9_".
-@return {[Range]} return sorted disjoint ranges
+ charset  Valid regex charset [^a-z0-9_] input as "^a-z0-9_".
+ return sorted disjoint ranges
 */
 function parseCharset(charset /*:String*/) {
   charset=charset.split('');
@@ -303,8 +300,8 @@ function parseCharset(charset /*:String*/) {
 /**
 Coalesce closed ranges.
 ['ac','d','ez'] will be coalesced to ['az']
-@param {[Range]} ranges Sorted disjoint ranges return by `classify`.
-@return {[Range]} Compressed ranges
+ ranges Sorted disjoint ranges return by `classify`.
+ Compressed ranges
 */
 function coalesce(ranges) {
   if (!ranges.length) return [];

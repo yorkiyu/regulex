@@ -1,7 +1,13 @@
+import {
+  CHARSET_NODE,
+  AssertLookahead,
+  ASSERT_NODE,
+  GROUP_NODE,
+  CHOICE_NODE,
+  EMPTY_NODE,
+  AssertNegativeLookahead,
+} from './constants';
 import K from './Kit';
-import parse from './parse';
-
-parse.exportConstants();
 
 var FONT_SIZE=16,LABEL_FONT_SIZE=14,PATH_LEN=16,BG_COLOR='#EEE',
     FONT_FAMILY='DejaVu Sans Mono,monospace';
@@ -30,9 +36,6 @@ function initTmpText(paper) {
   ).attr({'font-family':FONT_FAMILY,'font-size':FONT_SIZE});
 }
 
-/**
-@param {AST} re AST returned by `parse`
-*/
 function visualize(re,flags,paper) {
   paper.clear();
   paper.setSize(0,0);
@@ -725,7 +728,7 @@ var hlColorMap={
 
 
 /**
-@param {AST.tree} re AST.tree return by `parse`
+ re AST.tree return by `parse`
 */
 function highlight(tree) {
   var texts=[];

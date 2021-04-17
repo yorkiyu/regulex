@@ -1,9 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 
-// eslint-disable-next-line no-underscore-dangle
-const __DEV__ = process.env.NODE_ENV === 'development';
-const filename = __DEV__ ? '[name].js' : '[name].min.js';
+const filename = '[name].min.js';
 
 module.exports = {
   entry: {

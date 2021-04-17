@@ -1,3 +1,12 @@
+import {
+  AssertNegativeLookahead,
+  AssertLookahead,
+  AssertWordBoundary,
+  AssertEnd,
+  AssertBegin,
+  EXACT_NODE,
+  CHARSET_NODE,
+} from './constants';
 import NFA from './NFA';
 import K from './Kit';
 import parse from './parse';
@@ -5,8 +14,6 @@ import parse from './parse';
 /**
 Mock RegExp class
 */
-parse.exportConstants();
-//options
 RegExp.DEBUG=RegExp.D=1;
 RegExp.MULTILINE=RegExp.M=2;
 RegExp.GLOBAL=RegExp.G=4;
