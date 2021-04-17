@@ -9,12 +9,15 @@ import {
 } from './constants';
 import K from './Kit';
 
-var FONT_SIZE=16,LABEL_FONT_SIZE=14,PATH_LEN=16,BG_COLOR='#EEE',
-    FONT_FAMILY='DejaVu Sans Mono,monospace';
+const FONT_SIZE = 16;
+const LABEL_FONT_SIZE = 14;
+const PATH_LEN = 16;
+const BG_COLOR = '#eee';
+const FONT_FAMILY='DejaVu Sans Mono,monospace';
 
 var _multiLine=false; /* global flag quick work*/
 
-var PAPER_MARGIN=10;
+var PAPER_MARGIN = 10;
 
 var _charSizeCache={},_tmpText;
 function getCharSize(fontSize,fontBold) {
@@ -38,8 +41,8 @@ function initTmpText(paper) {
 
 function visualize(re,flags,paper) {
   paper.clear();
-  paper.setSize(0,0);
-  var bg = paper.rect(0,0,0,0);
+  paper.setSize(0, 0);
+  var bg = paper.rect(0, 0, 0, 0);
   bg.attr("fill", BG_COLOR);
   bg.attr("stroke", BG_COLOR);
   
@@ -73,7 +76,6 @@ function visualize(re,flags,paper) {
 
   height=Math.max(ret.height+3*PAPER_MARGIN+charSize.height,height);
   width=Math.max(ret.width+2*PAPER_MARGIN,width);
-
   paper.setSize(width,height);
   
   bg.attr('width',width);
@@ -360,6 +362,7 @@ var plotNode={
       }
       items.push(p);
     } else { // so completely remove label when /a?/ but not /a??/
+      // @ts-ignore
       txt=false;
     }
 
@@ -567,6 +570,7 @@ var plotNode={
     };
 
     var startY=rect.y+padding;
+    // @ts-ignore
     var items=[rect];
 
     packs.forEach(function (a) {

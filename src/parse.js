@@ -242,7 +242,7 @@ parse.getNFAParser=getNFAParser;
 var _NFAParser;
 function getNFAParser() {
   if (!_NFAParser) {
-    _NFAParser=NFA(config,G_DEBUG);
+    _NFAParser=NFA(config);
   }
   return _NFAParser;
 }
@@ -749,7 +749,7 @@ var actions=(function _() {
     repeatnStart:repeatnStart,repeatnComma:repeatnComma,repeatNonGreedy:repeatNonGreedy,
     repeatnEnd:repeatnEnd,repeat1:repeat1,repeat01:repeat01,repeat0:repeat0,
     charClassEscape:charClassEscape,normalEscape:normalEscape,
-    unicodeEscape:unicodeEscape,hexEscape:hexEscape,charClassEscape:charClassEscape,
+    unicodeEscape:unicodeEscape,hexEscape:hexEscape,
     groupStart:groupStart,groupNonCapture:groupNonCapture,backref:backref,
     groupToAssertion:groupToAssertion,groupEnd:groupEnd,
     choice:choice,endChoice:endChoice,

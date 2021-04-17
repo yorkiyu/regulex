@@ -1,15 +1,23 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 // @ts-ignore
 import regulex from '@regulex';
 
 export default function App() {
-  console.log(regulex);
-  const { parse, visualize, Raphael } = regulex;
+  const { parse, visualize, Raphael, saveSvg } = regulex;
+  const [paper, setPaper] = useState(null);
+  const regexp = /var\s+([a-zA-Z_]\w*);/ ;
   useEffect(() => {
-    const regexp = /var\s+([a-zA-Z_]\w*);/ ;
-    const regexpParse = regulex.parse(regexp.source);
+    const regexpParse = parse(regexp.source);
     const paper = Raphael('raphael', 0, 0);
+    setPaper(paper);
     visualize(regexpParse, 'g', paper);
   }, []);
-  return <div id="raphael"></div>;
+  return <>
+    <div id="raphael"></div>
+    <button
+      onClick={() => {
+        saveSvg.saveSvgAsPng(paper?.canvas, regexp.source);
+      }}
+    >下载图片</button>
+  </>;
 }

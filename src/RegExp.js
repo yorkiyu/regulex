@@ -6,6 +6,8 @@ import {
   AssertBegin,
   EXACT_NODE,
   CHARSET_NODE,
+  ASSERT_NODE,
+  AssertNonWordBoundary,
 } from './constants';
 import NFA from './NFA';
 import K from './Kit';
