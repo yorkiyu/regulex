@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+// @ts-ignore
 import regulex from '@regulex';
 
 export default function App() {

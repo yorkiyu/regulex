@@ -17,7 +17,7 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        use: ['babel-loader?babelrc'],
+        use: ['babel-loader'],
         exclude: /node_modules/,
       },
     ],
@@ -30,7 +30,7 @@ module.exports = {
   resolve: {
     extensions: ['.js'],
     alias: {
-      'regulex': path.resolve(__dirname, 'src/'),
+      '@regulex': path.resolve(__dirname, 'src'),
     },
   },
 };
