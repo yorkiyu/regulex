@@ -9,6 +9,7 @@
     "lib": ["es2017", "dom"],
     "paths": {
       "@regulex": ["./src"],
+      "@regulex/*": ["./src/*"],
     },
     "importHelpers": true,
     "allowSyntheticDefaultImports": true,
@@ -19,8 +20,10 @@
     "checkJs": true,
     "downlevelIteration": true,
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "noImplicitAny": false
   },
-  "include": ["src", "global.d.ts"],
+  "include": ["src/**/*.ts", "types/**/*.d.ts", "site/**/*.tsx?"],
+  "exclude": ["node_modules"],
   "compileOnSave": false
 }

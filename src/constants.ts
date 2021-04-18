@@ -6,7 +6,7 @@ export const ASSERT_NODE = 'assert';
 export const DOT_NODE = 'dot';
 export const BACKREF_NODE = 'backref';
 export const EMPTY_NODE = 'empty';
-//Assertion Type Constants
+// Assertion Type Constants
 export const AssertLookahead = 'AssertLookahead';
 export const AssertNegativeLookahead = 'AssertNegativeLookahead';
 export const AssertNonWordBoundary = 'AssertNonWordBoundary';

@@ -54,10 +54,10 @@ An automaton used to recognize triples:{
 
 */
 function NFA(a) {
-  a=a.compact?structure(a):a;
-  var accepts={},i,n,trans=a.trans,
-      // FMap={toState:Function}
-      router={/*
+  a = a.compact ? structure(a) : a;
+  const accepts = {}; let i; let n; const { trans } = a;
+  // FMap={toState:Function}
+  const router = {/*
         fromState : {
           eMove:[{to:State,action:Function,assert:Function,eMove:Bool}],
           eMoveStates:[State],// ε-move dest states
@@ -72,62 +72,68 @@ function NFA(a) {
         }
       */};
 
-  for (i=0,n=a.accepts.length;i<n;i++) accepts[a.accepts[i]]=true; //add accept states
+  for (i = 0, n = a.accepts.length; i < n; i++) accepts[a.accepts[i]] = true; // add accept states
 
-  var t;
-  for (i=0,n=trans.length;i<n;i++) {//collect charsets
-    t=trans[i];
-    if (t.charset) t.ranges= typeof t.charset==='string'?K.parseCharset(t.charset):t.charset;
-    else t.eMove=true;
-    t.from.forEach(function(from) {
-      var path=(router[from]=router[from] || {
-        eMoveStates:[],eMove:[],charMove:{},trans:[],ranges:[]
+  let t;
+  for (i = 0, n = trans.length; i < n; i++) { // collect charsets
+    t = trans[i];
+    if (t.charset) t.ranges = typeof t.charset === 'string' ? K.parseCharset(t.charset) : t.charset;
+    else t.eMove = true;
+    t.from.forEach((from) => {
+      const path = (router[from] = router[from] || {
+        eMoveStates: [], eMove: [], charMove: {}, trans: [], ranges: [],
       });
-      if (t.eMove) path.eMoveStates=path.eMoveStates.concat(t.to);
-      else path.ranges=path.ranges.concat(t.ranges);
+      if (t.eMove) path.eMoveStates = path.eMoveStates.concat(t.to);
+      else path.ranges = path.ranges.concat(t.ranges);
       path.trans.push(t);
     });
   }
-  var fromStates=Object.keys(router);
-  fromStates.forEach(function (from) {
-    var path=router[from],trans=path.trans,
-        charMove=path.charMove,eMove=path.eMove,
-        ranges=path.ranges;
-    var cls=K.classify(ranges),rangeMap=cls.map;
-    trans.forEach(function (t) {
+  const fromStates = Object.keys(router);
+  fromStates.forEach((from) => {
+    const path = router[from]; const { trans } = path;
+    const { charMove } = path; const { eMove } = path;
+    let { ranges } = path;
+    const cls = K.classify(ranges); const rangeMap = cls.map;
+    trans.forEach((t) => {
       if (t.eMove) {
-        t.to.forEach(function (toState) {
-          eMove.push({to:toState,action:t.action,assert:t.assert,eMove:true});
+        t.to.forEach((toState) => {
+          eMove.push({
+            to: toState, action: t.action, assert: t.assert, eMove: true,
+          });
         });
       } else {
-        K.flatten2(t.ranges.map(function (r) {return rangeMap[r]})).forEach(function (r) {
-          (charMove[r]=charMove[r] || []).push(t);
+        K.flatten2(t.ranges.map((r) => rangeMap[r])).forEach((r) => {
+          (charMove[r] = charMove[r] || []).push(t);
         });
       }
     });
-    ranges=K.Set(cls.ranges.filter(function (rg) {return !!rg[1]}));//exclude single char
-    path.ranges=ranges;
+    ranges = K.Set(cls.ranges.filter((rg) => !!rg[1]));// exclude single char
+    path.ranges = ranges;
     // expand charMove to includes ε-move
-    Object.keys(charMove).forEach(function (r) {
-      var transChar=charMove[r];
-      var transAll=[];
-      trans.forEach(function (t) {
-        t.to.forEach(function (toState) {
-          if (t.eMove || ~transChar.indexOf(t)) transAll.push({to:toState,action:t.action,assert:t.assert,eMove:t.eMove});
+    Object.keys(charMove).forEach((r) => {
+      const transChar = charMove[r];
+      const transAll = [];
+      trans.forEach((t) => {
+        t.to.forEach((toState) => {
+          if (t.eMove || ~transChar.indexOf(t)) {
+            transAll.push({
+              to: toState, action: t.action, assert: t.assert, eMove: t.eMove,
+            });
+          }
         });
       });
-      charMove[r]=transAll;
+      charMove[r] = transAll;
     });
     delete path.trans;
     delete path.eMoveStates;
   });
 
   return {
-    accepts:accepts,
-    router:router,
-    input:input,
-    assertDFA:assertDFA,
-    accept:accept
+    accepts,
+    router,
+    input,
+    assertDFA,
+    accept,
   };
 }
 
@@ -136,29 +142,28 @@ function accept(state) {
 }
 
 function assertDFA() {
-  var router=this.router;
-  var fromStates=Object.keys(router),path;
-  for (var i=0,l=fromStates.length;i<l;i++) {
-    path=router[fromStates[i]];
-    if (path.eMove.length>1) {
-      throw new Error("DFA Assertion Fail!\nFrom state `"+fromStates[i]+"` can goto to multi ε-move states!");
+  const { router } = this;
+  const fromStates = Object.keys(router); let path;
+  for (let i = 0, l = fromStates.length; i < l; i++) {
+    path = router[fromStates[i]];
+    if (path.eMove.length > 1) {
+      throw new Error(`DFA Assertion Fail!\nFrom state \`${fromStates[i]}\` can goto to multi ε-move states!`);
     }
-    var charMove=path.charMove;
-    var ranges=Object.keys(charMove);
-    for (var k=0,n=ranges.length;k<n;k++) {
-      var t=charMove[ranges[k]];
-      if (t.length!==1) {
+    const { charMove } = path;
+    const ranges = Object.keys(charMove);
+    for (let k = 0, n = ranges.length; k < n; k++) {
+      const t = charMove[ranges[k]];
+      if (t.length !== 1) {
         K.log(charMove);
-        throw new Error("DFA Assertion Fail!\nFrom state `"+fromStates[i]+"` via charset `"+ranges[k]+"` can goto to multi states!");
+        throw new Error(`DFA Assertion Fail!\nFrom state \`${fromStates[i]}\` via charset \`${ranges[k]}\` can goto to multi states!`);
       }
     }
     if (ranges.length && path.eMove.length) {
-      throw new Error("DFA Assertion Fail!\nFrom state `"+fromStates[i]+"` can goto extra ε-move state!");
+      throw new Error(`DFA Assertion Fail!\nFrom state \`${fromStates[i]}\` can goto extra ε-move state!`);
     }
   }
   return true;
 }
-
 
 /**
 return {
@@ -168,109 +173,109 @@ return {
     lastState:String
   }
 */
-function input(s,startIndex,_debug) {
-  startIndex=startIndex || 0;
-  var _this=this;
-  return _input(s,startIndex,'start',[],startIndex-1);
-  function _input(s,startIndex,fromState,stack,lastIndex) {
+function input(s, startIndex, _debug) {
+  startIndex = startIndex || 0;
+  const _this = this;
+  return _input(s, startIndex, 'start', [], startIndex - 1);
+  function _input(s, startIndex, fromState, stack, lastIndex) {
     recur:do {
-      var c,range,advanceIndex,lastResult;
-      var path=_this.router[fromState];
+      var c; var range; var advanceIndex; var lastResult;
+      const path = _this.router[fromState];
       if (!path) break;
-      var eMove=path.eMove,charMove=path.charMove,trans;
-      if (startIndex<s.length) {
-        c=s[startIndex];
+      const { eMove } = path; const { charMove } = path; var
+        trans;
+      if (startIndex < s.length) {
+        c = s[startIndex];
         if (charMove.hasOwnProperty(c)) {
-          trans=charMove[c];
-        } else if (range=findRange(path.ranges,c)) {
-          trans=charMove[range];
+          trans = charMove[c];
+        } else if (range = findRange(path.ranges, c)) {
+          trans = charMove[range];
         } else {
-          trans=eMove;
+          trans = eMove;
         }
       } else {
-        trans=eMove;
+        trans = eMove;
       }
 
-      var sp=stack.length,t,skip,ret,oldLastIndex=lastIndex;
-      for (var j=0,n=trans.length;j<n;j++) {
-        t=trans[j];
-        advanceIndex=t.eMove?0:1;
-        lastIndex=oldLastIndex;
-        stack.splice(0,stack.length-sp);
-        sp=stack.length; // backup stack length
+      let sp = stack.length; var t; var skip; var ret; const oldLastIndex = lastIndex;
+      for (let j = 0, n = trans.length; j < n; j++) {
+        t = trans[j];
+        advanceIndex = t.eMove ? 0 : 1;
+        lastIndex = oldLastIndex;
+        stack.splice(0, stack.length - sp);
+        sp = stack.length; // backup stack length
         if (t.assert) {
-          if ((skip=t.assert(stack,c,startIndex,fromState,s))===false) continue;
+          if ((skip = t.assert(stack, c, startIndex, fromState, s)) === false) continue;
           // For backref skip num chars
-          if (typeof skip==='number') {startIndex+=skip;lastIndex+=skip;}
+          if (typeof skip === 'number') { startIndex += skip; lastIndex += skip; }
         }
-        if (t.action) stack=t.action(stack,c,startIndex,fromState,s) || stack;
-        lastIndex=t.eMove?lastIndex:startIndex;
-        _debug && K.log(c+":"+fromState+">"+t.to);
-        if (j===n-1) {
-          startIndex+=advanceIndex;
-          fromState=t.to;
+        if (t.action) stack = t.action(stack, c, startIndex, fromState, s) || stack;
+        lastIndex = t.eMove ? lastIndex : startIndex;
+        _debug && K.log(`${c}:${fromState}>${t.to}`);
+        if (j === n - 1) {
+          startIndex += advanceIndex;
+          fromState = t.to;
           continue recur; // Human flesh tail call optimize?
         } else {
-          ret=_input(s,startIndex+advanceIndex,t.to,stack,lastIndex);
+          ret = _input(s, startIndex + advanceIndex, t.to, stack, lastIndex);
         }
         if (ret.acceptable) return ret;
-        lastResult=ret;
+        lastResult = ret;
       }
       if (lastResult) return lastResult;
       break;
     } while (true);
 
     return {
-      stack:stack,lastIndex:lastIndex,lastState:fromState,
-      acceptable:_this.accept(fromState)
+      stack,
+      lastIndex,
+      lastState: fromState,
+      acceptable: _this.accept(fromState),
     };
   }
 }
-
-
 
 /** ε-closure
 return closureMap {fromState:[toState]}
 eMoveMap = {fromState:{to:[State]}}
 */
-function eClosure(eMoves,eMoveMap) {
-  var closureMap={};
-  eMoves.forEach(function (state) { // FK forEach pass extra args
+function eClosure(eMoves, eMoveMap) {
+  const closureMap = {};
+  eMoves.forEach((state) => { // FK forEach pass extra args
     closure(state);
   });
   return closureMap;
 
-  function closure(state,_chain) {
+  function closure(state, _chain) {
     if (closureMap.hasOwnProperty(state)) return closureMap[state];
     if (!eMoveMap.hasOwnProperty(state)) return false;
-    _chain=_chain||[state];
-    var dest=eMoveMap[state],
-        queue=dest.to.slice(),
-        toStates=[state],s,clos;
+    _chain = _chain || [state];
+    const dest = eMoveMap[state];
+    let queue = dest.to.slice();
+    const toStates = [state]; let s; let clos;
     while (queue.length) {
-      s=queue.shift();
+      s = queue.shift();
       if (~_chain.indexOf(s)) {
-        throw new Error("Recursive ε-move:"+_chain.join(">")+">"+s+"!");
+        throw new Error(`Recursive ε-move:${_chain.join('>')}>${s}!`);
       }
-      clos=closure(s,_chain);
-      if (clos)  queue=clos.slice(1).concat(queue);
+      clos = closure(s, _chain);
+      if (clos) queue = clos.slice(1).concat(queue);
       toStates.push(s);
     }
-    return closureMap[state]=toStates;
+    return closureMap[state] = toStates;
   }
 }
 
-
-function findRange(ranges,c/*:Char*/) {
-  var i=ranges.indexOf(c,cmpRange);
+function findRange(ranges, c/*: Char */) {
+  const i = ranges.indexOf(c, cmpRange);
   if (!~i) return false;
   return ranges[i];
 }
 
-function cmpRange(c,rg) {
-  var head=rg[0],tail=rg[1];
-  if (c>tail) return 1;
-  if (c<head) return -1;
+function cmpRange(c, rg) {
+  const head = rg[0]; const tail = rg[1];
+  if (c > tail) return 1;
+  if (c < head) return -1;
   return 0;
 }
 
@@ -283,17 +288,19 @@ type CompactTransition = [CompactStateMap,Charset,Action,Assert]
 type CompactStateMap = FromStateSet.join(",")+">"+ToStateSet.join(",")
 */
 function structure(a) {
-  a.accepts=a.accepts.split(',');
-  var ts=a.trans,
-      i=ts.length,t,s,from,to;
+  a.accepts = a.accepts.split(',');
+  const ts = a.trans;
+  let i = ts.length; let t; let s; let from; let to;
   while (i--) {
-    t=ts[i];
-    s=t[0].split('>');
-    from=s[0].split(',');
-    to=s[1].split(',');
-    ts[i]={from:from,to:to,charset:t[1],action:t[2],assert:t[3]};
+    t = ts[i];
+    s = t[0].split('>');
+    from = s[0].split(',');
+    to = s[1].split(',');
+    ts[i] = {
+      from, to, charset: t[1], action: t[2], assert: t[3],
+    };
   }
-  a.compact=false;
+  a.compact = false;
   return a;
 }
 

@@ -20,6 +20,11 @@ module.exports = {
         use: ['babel-loader'],
         exclude: /node_modules/,
       },
+      {
+        test: /\.ts$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
     ],
   },
   plugins: [
@@ -28,7 +33,7 @@ module.exports = {
     }),
   ],
   resolve: {
-    extensions: ['.js'],
+    extensions: ['.js', '.ts'],
     alias: {
       '@regulex': path.resolve(__dirname, 'src'),
     },
