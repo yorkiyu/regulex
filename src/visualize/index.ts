@@ -10,7 +10,7 @@ export default function visualize({
   regexpParse,
   flags,
   themeName = 'normal',
-  containerId, 
+  containerId,
 }: VisualizeParams): RaphaelPaper {
   const theme: Theme = themes[themeName];
   const paper = raphael(containerId, 0, 0);
@@ -20,40 +20,51 @@ export default function visualize({
   bg.attr('fill', theme.bgColor);
   bg.attr('stroke', theme.bgColor);
 
-  theme.templateText = getTemplateText(paper, theme);
-  theme.multiLine = !!~flags.indexOf('m');
+  if (!theme.global) {
+    theme.global = {};
+  }
+  theme.global.templateText = getTemplateText(paper, theme);
+  theme.global.multiLine = !!~flags.indexOf('m');
 
   let texts = highlight(regexpParse.tree, theme);
 
-  texts.unshift(getHighlightText({
-    str: '/',
-    color: theme.highlightColor.delimiter,
-    theme,
-  }));
-  texts.unshift(getHighlightText({
-    str: 'RegExp: ',
-    theme,
-  }));
-  texts.push(getHighlightText({
-    str: '/',
-    color: theme.highlightColor.delimiter,
-    theme,
-  }));
-  if (flags) {
-    texts.push(getHighlightText({
-      str: flags,
-      color: theme.highlightColor.flags,
+  texts.unshift(
+    getHighlightText({
+      str: '/',
+      color: theme.highlightColor.delimiter,
       theme,
-    }));
+    }),
+  );
+  texts.unshift(
+    getHighlightText({
+      str: 'RegExp: ',
+      theme,
+    }),
+  );
+  texts.push(
+    getHighlightText({
+      str: '/',
+      color: theme.highlightColor.delimiter,
+      theme,
+    }),
+  );
+  if (flags) {
+    texts.push(
+      getHighlightText({
+        str: flags,
+        color: theme.highlightColor.flags,
+        theme,
+      }),
+    );
   }
   const charSize = getCharSize({
     fontSize: theme.nodeFontSize,
     fontBold: 'bold',
-    templateText: theme.templateText,
+    templateText: theme.global.templateText,
   });
   const startX = theme.paperMargin;
   const startY = charSize.height / 2 + theme.paperMargin;
-  
+
   let width = 0;
   let height = 0;
   width = texts.reduce((x, t) => {
@@ -66,7 +77,7 @@ export default function visualize({
   height = charSize.height + theme.paperMargin * 2;
   // @ts-ignore
   texts = paper.add(texts);
-  
+
   paper.setSize(width, charSize.height + theme.paperMargin * 2);
 
   const ret = plot({

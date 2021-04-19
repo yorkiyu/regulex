@@ -1,31 +1,20 @@
 import { AssertLookahead, AssertNegativeLookahead } from '../constants';
 import { PlotNodeParams, PlotParams } from '../types/visualize/element';
-import {
-  elideOK, onlyCharClass, plural, translate,
-} from './common';
-import {
-  hline, point, smoothLine, textLabel, textRect,
-} from './element';
+import { elideOK, onlyCharClass, plural, translate } from './common';
+import { hline, point, smoothLine, textLabel, textRect } from './element';
 
-export function plot({
-  tree,
-  x,
-  y,
-  theme,
-}: PlotParams) {
+export function plot({ tree, x, y, theme }: PlotParams) {
   tree.unshift({ type: 'startPoint' });
   tree.push({ type: 'endPoint' });
   return plotTree({
-    tree, x, y, theme,
+    tree,
+    x,
+    y,
+    theme,
   });
 }
 
-export function plotTree({
-  tree,
-  x,
-  y,
-  theme,
-}: PlotParams) {
+export function plotTree({ tree, x, y, theme }: PlotParams) {
   const results = [];
   let items = [];
   let width = 0;
@@ -35,18 +24,27 @@ export function plotTree({
   let bottom = y;
   if (!tree.length) {
     return plotNode.empty({
-      node: null, x, y, theme,
+      node: null,
+      x,
+      y,
+      theme,
     });
   }
   tree.forEach((node) => {
     let ret;
     if (node.repeat) {
       ret = plotNode.repeat({
-        node, x: fromX, y, theme,
+        node,
+        x: fromX,
+        y,
+        theme,
       });
     } else {
       ret = plotNode[node.type]({
-        node, x: fromX, y, theme,
+        node,
+        x: fromX,
+        y,
+        theme,
       });
     }
     results.push(ret);
@@ -81,16 +79,18 @@ export function plotTree({
 }
 
 export const plotNode = {
-  startPoint: ({ x, y }: PlotNodeParams) => point({
-    x,
-    y,
-    fill: 'r(0.5,0.5)#EFE-green',
-  }),
-  endPoint: ({ x, y }: PlotNodeParams) => point({
-    x,
-    y,
-    fill: 'r(0.5,0.5)#FFF-#000',
-  }),
+  startPoint: ({ x, y, theme }: PlotNodeParams) =>
+    point({
+      x,
+      y,
+      fill: theme.startPointFill,
+    }),
+  endPoint: ({ x, y, theme }: PlotNodeParams) =>
+    point({
+      x,
+      y,
+      fill: theme.endPointFill,
+    }),
   empty: ({ x, y }: PlotNodeParams) => {
     const len = 10;
     const l = hline({
@@ -108,9 +108,7 @@ export const plotNode = {
       lineOutX: x + len,
     };
   },
-  exact: ({
-    node, x, y, theme,
-  }: PlotNodeParams) => {
+  exact: ({ node, x, y, theme }: PlotNodeParams) => {
     const color = 'skyblue';
     return textRect({
       str: node.chars,
@@ -120,9 +118,7 @@ export const plotNode = {
       theme,
     });
   },
-  dot: ({
-    x, y, theme,
-  }: PlotNodeParams) => {
+  dot: ({ x, y, theme }: PlotNodeParams) => {
     const bgColor = 'DarkGreen';
     const textColor = 'white';
     const a = textRect({
@@ -137,9 +133,7 @@ export const plotNode = {
     a.rect.tip = 'AnyChar except CR LF';
     return a;
   },
-  backref: ({
-    node, x, y, theme,
-  }: PlotNodeParams) => {
+  backref: ({ node, x, y, theme }: PlotNodeParams) => {
     const bgColor = 'navy';
     const textColor = 'white';
     const a = textRect({
@@ -153,9 +147,7 @@ export const plotNode = {
     a.rect.r = 8;
     return a;
   },
-  repeat: ({
-    node, x, y, theme,
-  }: PlotNodeParams) => {
+  repeat: ({ node, x, y, theme }: PlotNodeParams) => {
     if (elideOK(node)) {
       return plotNode.empty({
         node: null,
@@ -178,14 +170,18 @@ export const plotNode = {
     }
 
     const ret = plotNode[node.type]({
-      node, x, y, theme,
+      node,
+      x,
+      y,
+      theme,
     });
     let { width } = ret;
     let { height } = ret;
 
     if (repeat.min === repeat.max && repeat.min === 1) {
       return ret; // if someone write /a{1}/
-    } if (repeat.min === repeat.max) {
+    }
+    if (repeat.min === repeat.max) {
       txt += plural(repeat.min);
     } else {
       txt += repeat.min;
@@ -203,19 +199,42 @@ export const plotNode = {
     const rectW = padding * 2 + ret.width;
     width = rectW;
     let p; // repeat rect box path
-    if (repeat.max !== 1) { // draw repeat rect box
+    if (repeat.max !== 1) {
+      // draw repeat rect box
       rectH += padding;
       height += padding;
       p = {
         type: 'path',
-        path: ['M', ret.x + padding, y,
-          'Q', x, y, x, y + r,
-          'V', y + rectH - r,
-          'Q', x, y + rectH, x + r, y + rectH,
-          'H', x + rectW - r,
-          'Q', x + rectW, y + rectH, x + rectW, y + rectH - r,
-          'V', y + r,
-          'Q', x + rectW, y, ret.x + ret.width + padding, y,
+        path: [
+          'M',
+          ret.x + padding,
+          y,
+          'Q',
+          x,
+          y,
+          x,
+          y + r,
+          'V',
+          y + rectH - r,
+          'Q',
+          x,
+          y + rectH,
+          x + r,
+          y + rectH,
+          'H',
+          x + rectW - r,
+          'Q',
+          x + rectW,
+          y + rectH,
+          x + rectW,
+          y + rectH - r,
+          'V',
+          y + r,
+          'Q',
+          x + rectW,
+          y,
+          ret.x + ret.width + padding,
+          y,
         ],
         _translate: curveTranslate,
         stroke: 'maroon',
@@ -227,13 +246,15 @@ export const plotNode = {
         p['stroke-dasharray'] = '-';
       }
       items.push(p);
-    } else { // so completely remove label when /a?/ but not /a??/
+    } else {
+      // so completely remove label when /a?/ but not /a??/
       // @ts-ignore
       txt = false;
     }
 
     let skipPath;
-    if (repeat.min === 0) { // draw a skip path
+    if (repeat.min === 0) {
+      // draw a skip path
       const skipRectH = y - ret.y + padding;
       const skipRectW = rectW + padding * 2;
       offsetX += padding;
@@ -242,14 +263,36 @@ export const plotNode = {
       height += padding;
       skipPath = {
         type: 'path',
-        path: ['M', x, y,
-          'Q', x + r, y, x + r, y - r,
-          'V', y - skipRectH + r,
-          'Q', x + r, y - skipRectH, x + r * 2, y - skipRectH,
-          'H', x + skipRectW - r * 2,
-          'Q', x + skipRectW - r, y - skipRectH, x + skipRectW - r, y - skipRectH + r,
-          'V', y - r,
-          'Q', x + skipRectW - r, y, x + skipRectW, y,
+        path: [
+          'M',
+          x,
+          y,
+          'Q',
+          x + r,
+          y,
+          x + r,
+          y - r,
+          'V',
+          y - skipRectH + r,
+          'Q',
+          x + r,
+          y - skipRectH,
+          x + r * 2,
+          y - skipRectH,
+          'H',
+          x + skipRectW - r * 2,
+          'Q',
+          x + skipRectW - r,
+          y - skipRectH,
+          x + skipRectW - r,
+          y - skipRectH + r,
+          'V',
+          y - r,
+          'Q',
+          x + skipRectW - r,
+          y,
+          x + skipRectW,
+          y,
         ],
         _translate: curveTranslate,
         stroke: repeat.nonGreedy ? NonGreedySkipPathColor : '#333',
@@ -315,12 +358,13 @@ export const plotNode = {
       lineOutX: ret.lineOutX + offsetX,
     };
   },
-  choice: ({
-    node, x, y, theme,
-  }: PlotNodeParams) => {
+  choice: ({ node, x, y, theme }: PlotNodeParams) => {
     if (elideOK(node)) {
       plotNode.empty({
-        node: null, x, y, theme,
+        node: null,
+        x,
+        y,
+        theme,
       });
     }
     const marginX = 20;
@@ -330,7 +374,10 @@ export const plotNode = {
     let width = 0;
     const branches = node.branches.map((branch) => {
       const ret = plotTree({
-        tree: branch, x, y, theme,
+        tree: branch,
+        x,
+        y,
+        theme,
       });
       height += ret.height;
       width = Math.max(width, ret.width);
@@ -368,18 +415,22 @@ export const plotNode = {
       });
       items.push(p1, p2);
       if (x + marginX !== dx - a.x + a.lineInX) {
-        items.push(hline({
-          x: x + marginX,
-          y: lineY,
-          destX: dx - a.x + a.lineInX,
-        }));
+        items.push(
+          hline({
+            x: x + marginX,
+            y: lineY,
+            destX: dx - a.x + a.lineInX,
+          }),
+        );
       }
       if (a.lineOutX + dx - a.x !== x + width - marginX) {
-        items.push(hline({
-          x: a.lineOutX + dx - a.x,
-          y: lineY,
-          destX: x + width - marginX,
-        }));
+        items.push(
+          hline({
+            x: a.lineOutX + dx - a.x,
+            y: lineY,
+            destX: x + width - marginX,
+          }),
+        );
       }
 
       a.x = dx;
@@ -397,13 +448,16 @@ export const plotNode = {
       lineOutX,
     };
   },
-  charset: ({
-    node, x, y, theme,
-  }: PlotNodeParams) => {
+  charset: ({ node, x, y, theme }: PlotNodeParams) => {
     const padding = 6;
     const spacing = 4;
     const clsDesc = {
-      d: 'Digit', D: 'NonDigit', w: 'Word', W: 'NonWord', s: 'WhiteSpace', S: 'NonWhiteSpace',
+      d: 'Digit',
+      D: 'NonDigit',
+      w: 'Word',
+      W: 'NonWord',
+      s: 'WhiteSpace',
+      S: 'NonWhiteSpace',
     };
     const charBgColor = 'LightSkyBlue';
     const charTextColor = 'black';
@@ -438,7 +492,7 @@ export const plotNode = {
       items.push(tl.label);
       const oldWidth = a.width;
       const width = Math.max(tl.width, a.width);
-      const offsetX = (width - oldWidth) / 2;// ajust label text
+      const offsetX = (width - oldWidth) / 2; // ajust label text
       translate(items, offsetX, 0);
       return {
         items,
@@ -592,12 +646,13 @@ export const plotNode = {
       lineOutX: offsetX + x + rect.width,
     };
   },
-  group: ({
-    node, x, y, theme,
-  }: PlotNodeParams) => {
+  group: ({ node, x, y, theme }: PlotNodeParams) => {
     if (elideOK(node)) {
       return plotNode.empty({
-        node: null, x, y, theme,
+        node: null,
+        x,
+        y,
+        theme,
       });
     }
     const padding = 10;
@@ -611,7 +666,8 @@ export const plotNode = {
     });
     if (node.num) {
       translate(sub.items, padding, 0);
-      const rectW = sub.width + padding * 2; const rectH = sub.height + padding * 2;
+      const rectW = sub.width + padding * 2;
+      const rectH = sub.height + padding * 2;
       const rect = {
         type: 'rect',
         x,
@@ -631,7 +687,7 @@ export const plotNode = {
       });
       const items = sub.items.concat([rect, tl.label]);
       const width = Math.max(tl.width, rectW);
-      const offsetX = (width - rectW) / 2;// ajust label text space
+      const offsetX = (width - rectW) / 2; // ajust label text space
       if (offsetX) translate(items, offsetX, 0);
       return {
         items,
@@ -645,9 +701,7 @@ export const plotNode = {
     }
     return sub;
   },
-  assert: ({
-    node, x, y, theme,
-  }: PlotNodeParams) => {
+  assert: ({ node, x, y, theme }: PlotNodeParams) => {
     const simpleAssert = {
       AssertNonWordBoundary: { bg: 'maroon', fg: 'white' },
       AssertWordBoundary: { bg: 'purple', fg: 'white' },
@@ -658,7 +712,7 @@ export const plotNode = {
     let txt = `${nat.replace('Assert', '')}!`;
     const conf = simpleAssert[nat];
     if (conf) {
-      if (theme.multiLine && (nat === 'AssertBegin' || nat === 'AssertEnd')) {
+      if (theme.global.multiLine && (nat === 'AssertBegin' || nat === 'AssertEnd')) {
         txt = `Line${txt}`;
       }
       return textRect({
@@ -671,7 +725,9 @@ export const plotNode = {
       });
     }
 
-    let lineColor; let fg; const padding = 8;
+    let lineColor;
+    let fg;
+    const padding = 8;
     if (nat === AssertLookahead) {
       lineColor = 'CornflowerBlue';
       fg = 'darkgreen';
@@ -684,9 +740,13 @@ export const plotNode = {
     }
 
     const sub = plotNode.group({
-      node, x, y, theme,
+      node,
+      x,
+      y,
+      theme,
     });
-    const rectH = sub.height + padding * 2; const rectW = sub.width + padding * 2;
+    const rectH = sub.height + padding * 2;
+    const rectW = sub.width + padding * 2;
     const rect = {
       type: 'rect',
       x,
@@ -707,7 +767,7 @@ export const plotNode = {
       theme,
     });
     const width = Math.max(rectW, tl.width);
-    const offsetX = (width - rectW) / 2;// ajust label text
+    const offsetX = (width - rectW) / 2; // ajust label text
     translate(sub.items, offsetX + padding, 0);
 
     if (offsetX) translate([rect, tl.label], offsetX, 0);

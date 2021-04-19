@@ -1,4 +1,4 @@
-import { RaphaelElement } from "raphael";
+import { RaphaelElement } from 'raphael';
 
 export interface Theme {
   nodeFontSize?: number;
@@ -10,17 +10,23 @@ export interface Theme {
   highlightColor?: HighlightColor;
   textAnchor?: string;
   fontWeight?: string | number;
+  startPointFill?: string;
+  endPointFill?: string;
+  // 全局变量
+  global?: Global;
+}
+
+export interface Global {
   multiLine?: boolean;
   templateText?: RaphaelElement;
 }
-
 export interface HighlightColor {
   delimiter?: string;
   flags?: string;
   exact?: string;
   dot?: string;
   backref?: string;
-  '$'?: string;
+  $?: string;
   '^'?: string;
   '\\b'?: string;
   '\\B'?: string;
