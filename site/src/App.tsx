@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import regulex from '@regulex';
+import vregexp from '@v-regexp';
 
 export default function App() {
-  const { parse, visualize, download } = regulex;
+  const { parse, visualize, download } = vregexp;
   const regexp = /var\s+([a-zA-Z_]\w*);/;
   const [paper, setPaper] = useState(null);
 

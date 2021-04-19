@@ -5,12 +5,12 @@ const filename = '[name].min.js';
 
 module.exports = {
   entry: {
-    regulex: path.join(__dirname, 'src'),
+    'v-regexp': path.join(__dirname, 'src'),
   },
   output: {
     path: path.join(__dirname, 'dist'),
     filename,
-    library: 'regulex',
+    library: 'v-regexp',
     libraryTarget: 'umd',
   },
   module: {
@@ -35,7 +35,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.ts'],
     alias: {
-      '@regulex': path.resolve(__dirname, 'src'),
+      '@v-regexp': path.resolve(__dirname, 'src'),
     },
   },
 };

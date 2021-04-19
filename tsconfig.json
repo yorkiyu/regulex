@@ -8,8 +8,8 @@
     "rootDir": ".",
     "lib": ["es2017", "dom"],
     "paths": {
-      "@regulex": ["./src"],
-      "@regulex/*": ["./src/*"],
+      "@v-regexp": ["./src"],
+      "@v-regexp/*": ["./src/*"],
     },
     "importHelpers": true,
     "allowSyntheticDefaultImports": true,

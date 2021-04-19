@@ -1,12 +1,12 @@
 const path = require('path');
 const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 // 整个项目的根目录
 const ROOT = path.resolve(__dirname, '..');
-// regulex 项目根目录
-const REGULEX_ROOT = path.resolve(ROOT, 'src');
+// v-regexp 项目根目录
+const V_REGEXP_ROOT = path.resolve(ROOT, 'src');
 const filename = '[name].[hash:10].js';
 
 module.exports = {
@@ -42,7 +42,7 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     alias: {
-      '@regulex': REGULEX_ROOT,
+      '@v-regexp': V_REGEXP_ROOT,
     },
   },
   resolveLoader: {

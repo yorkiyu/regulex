@@ -1,16 +1,16 @@
 {
-  "name": "regulex",
+  "name": "v-regexp",
   "version": "0.0.5",
   "description": "JavaScript Regular Expression Parser and Visualizer.",
   "main": "index",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CJex/regulex.git"
+    "url": "https://github.com/yorkyu/v-regexp.git"
   },
   "keywords": [
     "Regular Expression",
     "RegExp",
-    "Regulex"
+    "v-regexp"
   ],
   "author": {
     "name": "yorkyu"
