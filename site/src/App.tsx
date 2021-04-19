@@ -3,8 +3,9 @@ import regulex from '@regulex';
 
 export default function App() {
   const { parse, visualize, download } = regulex;
-  const regexp = /var\s+([a-zA-Z_]\w*);/ ;
+  const regexp = /var\s+([a-zA-Z_]\w*);/;
   const [paper, setPaper] = useState(null);
+
   useEffect(() => {
     const regexpParse = parse(regexp.source);
     const p = visualize({
@@ -14,12 +15,18 @@ export default function App() {
     });
     setPaper(p);
   }, []);
-  return <>
-    <div id="raphael"></div>
-    <button
-      onClick={() => {
-        download.png(paper, regexp.source);
-      }}
-    >下载图片</button>
-  </>;
+
+  return (
+    <>
+      <div id="raphael" />
+      <button
+        type="button"
+        onClick={() => {
+          download.png(paper, regexp.source);
+        }}
+      >
+        下载图片
+      </button>
+    </>
+  );
 }

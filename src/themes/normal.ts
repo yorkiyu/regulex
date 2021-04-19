@@ -1,6 +1,9 @@
 import { Theme } from '../types/theme';
 
-export const defaultTheme: Theme = {
+/**
+ * 常规主题
+ */
+export const normal: Theme = {
   nodeFontSize: 16,
   labelFontSize: 14,
   fontFamily: 'DejaVu Sans Mono,monospace', 

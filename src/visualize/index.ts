@@ -1,7 +1,7 @@
 import raphael, { RaphaelPaper } from 'raphael';
 import { VisualizeParams } from '@regulex/types/visualize';
 import { Theme } from '@regulex/types/theme';
-import * as themes from '../themes';
+import themes from '../themes';
 import { getCharSize, getHighlightText, getTemplateText, translate } from './common';
 import { highlight } from './highlight';
 import { plot } from './plot';
@@ -9,7 +9,7 @@ import { plot } from './plot';
 export default function visualize({
   regexpParse,
   flags,
-  themeName = 'defaultTheme',
+  themeName = 'normal',
   containerId, 
 }: VisualizeParams): RaphaelPaper {
   const theme: Theme = themes[themeName];

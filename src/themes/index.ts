@@ -1,1 +1,5 @@
-export * from './defaultTheme';
+import { normal } from './normal';
+
+export default {
+  normal,
+};

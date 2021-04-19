@@ -23,7 +23,12 @@
     "resolveJsonModule": true,
     "noImplicitAny": false
   },
-  "include": ["src/**/*.ts", "types/**/*.d.ts", "site/**/*.tsx?"],
+  "include": [
+    "src/**/*.ts",
+    "types/**/*.d.ts",
+    "site/**/*.tsx",
+    "site/**/*.ts",
+  ],
   "exclude": ["node_modules"],
   "compileOnSave": false
 }
