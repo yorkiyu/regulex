@@ -92,7 +92,8 @@ export function textLabel({ x, y, str, color, theme }: TextLabelParams): TextLab
   };
 }
 
-export function hline({ x, y, destX }: HlineParams): ElementHline {
+// 可视化图形，横轴线
+export function hline({ x, y, destX, theme }: HlineParams): ElementHline {
   return {
     type: 'path',
     x,
@@ -100,8 +101,8 @@ export function hline({ x, y, destX }: HlineParams): ElementHline {
     path: ['M', x, y, 'H', destX],
     'stroke-linecap': 'butt',
     'stroke-linejoin': 'round',
-    stroke: '#333',
-    'stroke-width': 2,
+    stroke: theme.hline.stroke,
+    'stroke-width': theme.hline.strokeWidth,
     _translate(x, y) {
       const p = this.path;
       p[1] += x;

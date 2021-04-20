@@ -13,7 +13,7 @@ export interface ElementText {
   type: 'text';
   x: number;
   y: number;
-  text: string,
+  text: string;
   'font-size': number;
   'font-family': string;
   fill: string;
@@ -46,7 +46,7 @@ export interface ElementSmoothLine {
   path: any;
   'stroke-linecap': string;
   'stroke-linejoin': string;
-  'stroke': string;
+  stroke: string;
   'stroke-width': number;
   _translate: any;
 }
@@ -58,7 +58,7 @@ export interface ElementHline {
   path: any;
   'stroke-linecap': string;
   'stroke-linejoin': string;
-  'stroke': string;
+  stroke: string;
   'stroke-width': number;
   _translate: any;
 }
@@ -66,7 +66,7 @@ export interface ElementHline {
 export interface TextRectResult {
   text: ElementText;
   rect: ElementRect;
-  items: [ElementRect, ElementText],
+  items: [ElementRect, ElementText];
   width: number;
   height: number;
   x: number;
@@ -95,6 +95,7 @@ export interface HlineParams {
   x?: number;
   y?: number;
   destX?: number;
+  theme: Theme;
 }
 
 export interface SmoothLineParams {

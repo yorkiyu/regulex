@@ -70,7 +70,9 @@ export default function visualize({
   width = texts.reduce((x, t) => {
     t.x = x;
     t.y = startY;
-    const w = t.text.length * charSize.width;
+    const text = Number.isInteger(t.text) ? t.text.toString() : t.text;
+    const length = text ? text.length : 0;
+    const w = length * charSize.width;
     return x + w;
   }, startX);
   width += theme.paperMargin;

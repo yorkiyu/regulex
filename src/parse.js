@@ -106,7 +106,10 @@ AST.prototype.traverse = function (f, nodeType) {
     stack.forEach((node) => {
       if (!nodeType || node.type === nodeType) f(node);
       if (node.sub) travel(node.sub, f);
-      else if (node.branches) node.branches.forEach((b) => { travel(b, f); });
+      else if (node.branches)
+        node.branches.forEach((b) => {
+          travel(b, f);
+        });
     });
   }
 };
@@ -129,23 +132,26 @@ function parse(re, _debug) {
 
   const parser = getNFAParser();
 
-  let ret; let stack; let lastState;
+  let ret;
+  let stack;
+  let lastState;
   ret = parser.input(re, 0, _debug);
   stack = ret.stack;
 
   stack = actions.endChoice(stack); // e.g. /a|b/
 
   lastState = ret.lastState;
-  const valid = ret.acceptable && ret.lastIndex === re.length - 1;// just syntax valid regex
+  const valid = ret.acceptable && ret.lastIndex === re.length - 1; // just syntax valid regex
   if (!valid) {
     let error;
     switch (lastState) {
       case 'charsetRangeEndWithNullChar':
         error = {
           type: 'CharsetRangeEndWithNullChar',
-          message: 'Charset range end with NUL char does not make sense!\n'
-                      + 'Because [a-\\0] is not a valid range.\n'
-                      + 'And [\\0-\\0] should be rewritten into [\\0].',
+          message:
+            'Charset range end with NUL char does not make sense!\n' +
+            'Because [a-\\0] is not a valid range.\n' +
+            'And [\\0-\\0] should be rewritten into [\\0].',
         };
         break;
       case 'repeatErrorFinal':
@@ -169,7 +175,8 @@ function parse(re, _debug) {
       case 'charsetOctEscape':
         error = {
           type: 'DecimalEscape',
-          message: 'Decimal escape appears in charset is invalid.Because it can\'t be explained as  backreference.And octal escape is deprecated!',
+          message:
+            "Decimal escape appears in charset is invalid.Because it can't be explained as  backreference.And octal escape is deprecated!",
         };
         break;
       default:
@@ -245,7 +252,10 @@ function getNFAParser() {
 
 function _set(obj, prop, value) {
   Object.defineProperty(obj, prop, {
-    value, enumerable: G_DEBUG, writable: true, configurable: true,
+    value,
+    enumerable: G_DEBUG,
+    writable: true,
+    configurable: true,
   });
 }
 
@@ -254,7 +264,8 @@ function _filterEmptyExact(stack) {
     if (node.type == EXACT_NODE && node.concatTemp) {
       delete node.concatTemp;
       return !!node.chars;
-    } if (node.sub) {
+    }
+    if (node.sub) {
       node.sub = _filterEmptyExact(node.sub);
     } else if (node.branches) {
       node.branches = node.branches.map(_filterEmptyExact);
@@ -322,12 +333,13 @@ function _fixNodes(stack, re, endIndex) {
 function _checkRepeat(node) {
   if (node.repeat) {
     const astype = node.assertionType;
-    let msg = 'Nothing to repeat! Repeat after assertion doesn\'t make sense!';
+    let msg = "Nothing to repeat! Repeat after assertion doesn't make sense!";
     if (astype === 'AssertLookahead' || astype === 'AssertNegativeLookahead') {
       const assertifier = astype === 'AssertLookahead' ? '?=' : '?!';
       const pattern = `(${assertifier}b)`;
-      msg += `\n/a${pattern}+/、/a${pattern}{1,n}/ are the same as /a${pattern}/。\n`
-              + `/a${pattern}*/、/a${pattern}{0,n}/、/a${pattern}?/ are the same as /a/。`;
+      msg +=
+        `\n/a${pattern}+/、/a${pattern}{1,n}/ are the same as /a${pattern}/。\n` +
+        `/a${pattern}*/、/a${pattern}{0,n}/、/a${pattern}?/ are the same as /a/。`;
     }
 
     throw new RegexSyntaxError({
@@ -341,16 +353,18 @@ function _checkRepeat(node) {
 // check charset ranges out of order error.(Because of charsetRangeEndEscape)
 // [z-\u54] had to defer check
 function _checkCharsetRange(node) {
-  node.ranges = K.sortUnique(node.ranges.map((range) => {
-    if (range[0] > range[1]) {
-      throw new RegexSyntaxError({
-        type: 'OutOfOrder',
-        lastIndex: range.lastIndex,
-        message: `Range [${range.join('-')}] out of order in character class!`,
-      });
-    }
-    return range.join('');
-  }));
+  node.ranges = K.sortUnique(
+    node.ranges.map((range) => {
+      if (range[0] > range[1]) {
+        throw new RegexSyntaxError({
+          type: 'OutOfOrder',
+          lastIndex: range.lastIndex,
+          message: `Range [${range.join('-')}] out of order in character class!`,
+        });
+      }
+      return range.join('');
+    }),
+  );
 }
 
 function RegexSyntaxError(e) {
@@ -361,7 +375,8 @@ function RegexSyntaxError(e) {
   this.astStack = e.astStack;
   this.message = e.message;
   Object.defineProperty(this, 'stack', {
-    value: new Error(e.message).stack, enumerable: false,
+    value: new Error(e.message).stack,
+    enumerable: false,
   });
 }
 RegexSyntaxError.prototype.toString = function () {
@@ -369,14 +384,19 @@ RegexSyntaxError.prototype.toString = function () {
 };
 
 const escapeCharMap = {
-  n: '\n', r: '\r', t: '\t', v: '\v', f: '\f',
+  n: '\n',
+  r: '\r',
+  t: '\t',
+  v: '\v',
+  f: '\f',
 };
 
 // All indices' end will be fixed later by stack[i].indices.push(stack[i+1].indices[0])
 // All raw string filled later by node.raw=s.slice(node.indices[0],node.indices[1])
 // All nodes are unshift to stack, so they're reverse order.
 var actions = (function _() {
-  function exact(stack, c, i) { // any literal string.
+  function exact(stack, c, i) {
+    // any literal string.
     // ExactNode.chars will be filled later (than raw)
     // Escape actions and repeat actions will fill node.chars
     // node.chars = node.chars || node.raw
@@ -389,7 +409,8 @@ var actions = (function _() {
       last.chars += c;
     }
   }
-  function dot(stack, c, i) { //   /./
+  function dot(stack, c, i) {
+    //   /./
     stack.unshift({ type: DOT_NODE, indices: [i] });
   }
   function nullChar(stack, c, i) {
@@ -399,7 +420,8 @@ var actions = (function _() {
       indices: [i - 1],
     });
   }
-  function assertBegin(stack, c, i) { //  /^/
+  function assertBegin(stack, c, i) {
+    //  /^/
     stack.unshift({
       type: ASSERT_NODE,
       indices: [i],
@@ -413,36 +435,43 @@ var actions = (function _() {
       assertionType: AssertEnd,
     });
   }
-  function assertWordBoundary(stack, c, i) { // \b \B assertion
+  function assertWordBoundary(stack, c, i) {
+    // \b \B assertion
     stack.unshift({
       type: ASSERT_NODE,
       indices: [i - 1],
       assertionType: c == 'b' ? AssertWordBoundary : AssertNonWordBoundary,
     });
   }
-  function repeatnStart(stack, c, i) { //  /a{/
+  function repeatnStart(stack, c, i) {
+    //  /a{/
     // Treat repeatn as normal exact node,do transfer in repeatnEnd action.
     // Because /a{+/ is valid.
     const last = stack[0];
     if (last.type === EXACT_NODE) {
-
-    } else { // '[a-z]{' is valid
+    } else {
+      // '[a-z]{' is valid
       stack.unshift({ type: EXACT_NODE, indices: [i] });
     }
   }
 
-  function repeatnComma(stack, c, i) { // /a{n,}/
+  function repeatnComma(stack, c, i) {
+    // /a{n,}/
     const last = stack[0];
     _set(last, '_commaIndex', i);
   }
-  function repeatnEnd(stack, c, i, state, s) { // /a{n,m}/
-    const last = stack[0]; const charEndIndex = s.lastIndexOf('{', i);
+  function repeatnEnd(stack, c, i, state, s) {
+    // /a{n,m}/
+    const last = stack[0];
+    const charEndIndex = s.lastIndexOf('{', i);
     const min = parseInt(s.slice(charEndIndex + 1, last._commaIndex || i), 10);
     let max;
-    if (!last._commaIndex) { // /a{n}/
+    if (!last._commaIndex) {
+      // /a{n}/
       max = min;
     } else {
-      if (last._commaIndex + 1 == i) { // /a{n,}/
+      if (last._commaIndex + 1 == i) {
+        // /a{n,}/
         max = Infinity;
       } else {
         max = parseInt(s.slice(last._commaIndex + 1, i), 10);
@@ -463,14 +492,22 @@ var actions = (function _() {
     }
     _repeat(stack, min, max, charEndIndex, s);
   }
-  function repeat0(stack, c, i, state, s) { _repeat(stack, 0, Infinity, i, s); } // e.g. /a*/
-  function repeat01(stack, c, i, state, s) { _repeat(stack, 0, 1, i, s); } // e.g. /a?/
-  function repeat1(stack, c, i, state, s) { _repeat(stack, 1, Infinity, i, s); } // e.g. /a+/
+  function repeat0(stack, c, i, state, s) {
+    _repeat(stack, 0, Infinity, i, s);
+  } // e.g. /a*/
+  function repeat01(stack, c, i, state, s) {
+    _repeat(stack, 0, 1, i, s);
+  } // e.g. /a?/
+  function repeat1(stack, c, i, state, s) {
+    _repeat(stack, 1, Infinity, i, s);
+  } // e.g. /a+/
   function _repeat(stack, min, max, charEndIndex, s) {
-    const last = stack[0]; const repeat = { min, max, nonGreedy: false };
+    const last = stack[0];
+    const repeat = { min, max, nonGreedy: false };
     let charIndex = charEndIndex - 1;
     if (last.chars && last.chars.length === 1) charIndex = last.indices[0];
-    if (last.type === EXACT_NODE) { // exact node only repeat last char
+    if (last.type === EXACT_NODE) {
+      // exact node only repeat last char
       const a = {
         type: EXACT_NODE,
         repeat,
@@ -484,7 +521,9 @@ var actions = (function _() {
     }
     _set(repeat, 'beginIndex', charEndIndex - stack[0].indices[0]);
   }
-  function repeatNonGreedy(stack) { stack[0].repeat.nonGreedy = true; }
+  function repeatNonGreedy(stack) {
+    stack[0].repeat.nonGreedy = true;
+  }
 
   function escapeStart(stack, c, i) {
     stack.unshift({
@@ -498,7 +537,9 @@ var actions = (function _() {
     if (escapeCharMap.hasOwnProperty(c)) c = escapeCharMap[c];
 
     stack.unshift({
-      type: EXACT_NODE, chars: c, indices: [i - 1],
+      type: EXACT_NODE,
+      chars: c,
+      indices: [i - 1],
     });
   }
   function charClassEscape(stack, c, i) {
@@ -530,7 +571,7 @@ var actions = (function _() {
     });
   }
   function groupStart(stack, c, i) {
-    const counter = (stack.groupCounter = (stack.groupCounter || { i: 0 }));
+    const counter = (stack.groupCounter = stack.groupCounter || { i: 0 });
     counter.i++;
     const group = {
       type: GROUP_NODE,
@@ -544,13 +585,15 @@ var actions = (function _() {
     stack.groupCounter = counter; // keep groupCounter persist and ref modifiable
     return stack;
   }
-  function groupNonCapture(stack) { // /(?:)/
+  function groupNonCapture(stack) {
+    // /(?:)/
     const group = stack._parentGroup;
     group.nonCapture = true;
     group.num = undefined;
     stack.groupCounter.i--;
   }
-  function groupToAssertion(stack, c, i) { // Convert /(?!)/,/(?=)/ to AssertNode
+  function groupToAssertion(stack, c, i) {
+    // Convert /(?!)/,/(?=)/ to AssertNode
     const group = stack._parentGroup;
     group.type = ASSERT_NODE;
     group.assertionType = c == '=' ? AssertLookahead : AssertNegativeLookahead;
@@ -578,9 +621,11 @@ var actions = (function _() {
     group.endParenIndex = i;
     return stack;
   }
-  function choice(stack, c, i) { // encounters "|"
+  function choice(stack, c, i) {
+    // encounters "|"
     // replace current stack with choices new branch stack
-    const newStack = []; let choice;
+    const newStack = [];
+    let choice;
     if (stack._parentChoice) {
       choice = stack._parentChoice;
       choice.branches.unshift(newStack);
@@ -589,11 +634,12 @@ var actions = (function _() {
       newStack.groupCounter = stack.groupCounter; // keep track
       delete stack._parentChoice;
       delete stack.groupCounter; // This stack is in choice.branches,so clean it
-    } else { //  "/(a|)/" ,create new ChoiceNode
+    } else {
+      //  "/(a|)/" ,create new ChoiceNode
       const first = stack[stack.length - 1]; // Because of stack is reverse order
       choice = {
         type: CHOICE_NODE,
-        indices: [(first ? first.indices[0] : i - 1)],
+        indices: [first ? first.indices[0] : i - 1],
         branches: [],
       };
       _set(choice, '_parentStack', stack);
@@ -637,8 +683,12 @@ var actions = (function _() {
       chars: '',
     });
   }
-  function charsetExclude(stack) { stack[0].exclude = true; }
-  function charsetContent(stack, c, i) { stack[0].chars += c; }
+  function charsetExclude(stack) {
+    stack[0].exclude = true;
+  }
+  function charsetContent(stack, c, i) {
+    stack[0].chars += c;
+  }
   function charsetNormalEscape(stack, c, i) {
     if (escapeCharMap.hasOwnProperty(c)) c = escapeCharMap[c];
     stack[0].chars += c;
@@ -718,12 +768,14 @@ var actions = (function _() {
   I will make it conform the Standard.(Also keep code simple)
   */
   function backref(stack, c, i, state) {
-    let last = stack[0]; let n = parseInt(c, 10);
+    let last = stack[0];
+    let n = parseInt(c, 10);
     const isFirstNum = state === 'escape';
     const counter = stack.groupCounter;
     const cn = (counter && counter.i) || 0;
 
-    if (!isFirstNum) { // previous node must be backref node
+    if (!isFirstNum) {
+      // previous node must be backref node
       n = parseInt(`${last.num}${n}`, 10);
     } else {
       last = { type: BACKREF_NODE, indices: [i - 1] };
@@ -796,7 +848,7 @@ var actions = (function _() {
     charsetRangeEndUnicodeEscape,
     charsetRangeEndHexEscape,
   };
-}());
+})();
 
 const digit = '0-9';
 const hexDigit = '0-9a-fA-F';
@@ -826,13 +878,15 @@ const unicodeEscapeStates = 'unicodeEscape1,unicodeEscape2,unicodeEscape3,unicod
 
 const allHexEscapeStates = `${hexEscapeStates},${unicodeEscapeStates}`;
 
-const charsetIncompleteEscapeStates = 'charsetUnicodeEscape1,charsetUnicodeEscape2,charsetUnicodeEscape3,charsetUnicodeEscape4,charsetHexEscape1,charsetHexEscape2';
+const charsetIncompleteEscapeStates =
+  'charsetUnicodeEscape1,charsetUnicodeEscape2,charsetUnicodeEscape3,charsetUnicodeEscape4,charsetHexEscape1,charsetHexEscape2';
 
 // [a-\u1z] means [a-u1z], [a-\u-z] means [-za-u]
 // [a-\u0-9] means [a-u0-9]. WTF!
 const charsetRangeEndIncompleteEscapeFirstStates = 'charsetRangeEndUnicodeEscape1,charsetRangeEndHexEscape1';
 
-const charsetRangeEndIncompleteEscapeRemainStates = 'charsetRangeEndUnicodeEscape2,charsetRangeEndUnicodeEscape3,charsetRangeEndUnicodeEscape4,charsetRangeEndHexEscape2';
+const charsetRangeEndIncompleteEscapeRemainStates =
+  'charsetRangeEndUnicodeEscape2,charsetRangeEndUnicodeEscape3,charsetRangeEndUnicodeEscape4,charsetRangeEndHexEscape2';
 
 const charsetRangeEndIncompleteEscapeStates = `${charsetRangeEndIncompleteEscapeFirstStates},${charsetRangeEndIncompleteEscapeRemainStates}`;
 
@@ -840,16 +894,36 @@ var config = {
   compact: true,
   accepts: `start,begin,end,repeat0,repeat1,exact,repeatn,repeat01,repeatNonGreedy,choice,${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates}`,
   trans: [
-    ['start,begin,end,exact,repeatNonGreedy,repeat0,repeat1,repeat01,groupStart,groupQualifiedStart,choice,repeatn>exact', exactEXCharset, actions.exact],
+    [
+      'start,begin,end,exact,repeatNonGreedy,repeat0,repeat1,repeat01,groupStart,groupQualifiedStart,choice,repeatn>exact',
+      exactEXCharset,
+      actions.exact,
+    ],
     // e.g. /\u54/ means /u54/
     [`${allHexEscapeStates}>exact`, exactEXCharset + hexDigit, actions.exact],
     // e.g. /\0abc/ is exact "\0abc",but /\012/ is an error
     ['nullChar>exact', exactEXCharset + digit, actions.exact],
     // [(repeatnStates+',nullChar,digitBackref,'+unicodeEscapeStates+','+hexEscapeStates)+'>exact',exactEXCharset+'']
-    [`${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates},start,begin,end,exact,repeatNonGreedy,repeat0,repeat1,repeat01,groupStart,groupQualifiedStart,choice,repeatn>exact`, '.', actions.dot],
-    [`start,groupStart,groupQualifiedStart,end,begin,exact,repeat0,repeat1,repeat01,repeatn,repeatNonGreedy,choice,${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates}>begin`, '^', actions.assertBegin],
-    [`${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates},exact>repeatnStart`, '{', actions.repeatnStart],
-    ['start,begin,end,groupQualifiedStart,groupStart,repeat0,repeat1,repeatn,repeat01,repeatNonGreedy,choice>repeatnErrorStart', '{', actions.exact], // No repeat,treat as exact char e.g. /{/,/^{/,/a|{/
+    [
+      `${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates},start,begin,end,exact,repeatNonGreedy,repeat0,repeat1,repeat01,groupStart,groupQualifiedStart,choice,repeatn>exact`,
+      '.',
+      actions.dot,
+    ],
+    [
+      `start,groupStart,groupQualifiedStart,end,begin,exact,repeat0,repeat1,repeat01,repeatn,repeatNonGreedy,choice,${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates}>begin`,
+      '^',
+      actions.assertBegin,
+    ],
+    [
+      `${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates},exact>repeatnStart`,
+      '{',
+      actions.repeatnStart,
+    ],
+    [
+      'start,begin,end,groupQualifiedStart,groupStart,repeat0,repeat1,repeatn,repeat01,repeatNonGreedy,choice>repeatnErrorStart',
+      '{',
+      actions.exact,
+    ], // No repeat,treat as exact char e.g. /{/,/^{/,/a|{/
     ['repeatnStart>repeatn_1', digit, actions.exact], // Now maybe /a{1/
     ['repeatn_1>repeatn_1', digit, actions.exact], // Could be /a{11/
     ['repeatn_1>repeatn_2', ',', actions.repeatnComma], // Now maybe /a{1,/
@@ -874,15 +948,31 @@ var config = {
     // "/a{2,a/" and "/{3,a" are valid
     ['repeatn_2,repeatnError_2>exact', `${exactEXCharset + digit}}`, actions.exact],
 
-    [`exact,${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates}>repeat0`, '*', actions.repeat0],
-    [`exact,${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates}>repeat1`, '+', actions.repeat1],
-    [`exact,${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates}>repeat01`, '?', actions.repeat01],
+    [
+      `exact,${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates}>repeat0`,
+      '*',
+      actions.repeat0,
+    ],
+    [
+      `exact,${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates}>repeat1`,
+      '+',
+      actions.repeat1,
+    ],
+    [
+      `exact,${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates}>repeat01`,
+      '?',
+      actions.repeat01,
+    ],
     ['choice>repeatErrorFinal', '*+?'],
     ['repeat0,repeat1,repeat01,repeatn>repeatNonGreedy', '?', actions.repeatNonGreedy],
     ['repeat0,repeat1,repeat01,repeatn>repeatErrorFinal', '+*'],
 
     // Escape
-    [`start,begin,end,groupStart,groupQualifiedStart,exact,repeatNonGreedy,repeat0,repeat1,repeat01,repeatn,choice,${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates}>escape`, '\\', actions.escapeStart],
+    [
+      `start,begin,end,groupStart,groupQualifiedStart,exact,repeatNonGreedy,repeat0,repeat1,repeat01,repeatn,choice,${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates}>escape`,
+      '\\',
+      actions.escapeStart,
+    ],
     ['escape>nullChar', '0', actions.nullChar],
     ['nullChar>digitFollowNullError', '0-9'], // "/\0123/" is invalid in standard
     ['escape>exact', normalEscapeEX, actions.normalEscape],
@@ -902,20 +992,40 @@ var config = {
     ['digitBackref>exact', exactEXCharset + digit, actions.exact],
 
     // Group start
-    [`exact,begin,end,repeat0,repeat1,repeat01,repeatn,repeatNonGreedy,start,groupStart,groupQualifiedStart,choice,${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates}>groupStart`, '(', actions.groupStart],
+    [
+      `exact,begin,end,repeat0,repeat1,repeat01,repeatn,repeatNonGreedy,start,groupStart,groupQualifiedStart,choice,${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates}>groupStart`,
+      '(',
+      actions.groupStart,
+    ],
     ['groupStart>groupQualify', '?'],
     ['groupQualify>groupQualifiedStart', ':', actions.groupNonCapture], // group non-capturing
     ['groupQualify>groupQualifiedStart', '=', actions.groupToAssertion], // group positive lookahead
     ['groupQualify>groupQualifiedStart', '!', actions.groupToAssertion], // group negative lookahead
-    [`${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates},groupStart,groupQualifiedStart,begin,end,exact,repeat1,repeat0,repeat01,repeatn,repeatNonGreedy,choice>exact`, ')', actions.groupEnd], // group end
+    [
+      `${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates},groupStart,groupQualifiedStart,begin,end,exact,repeat1,repeat0,repeat01,repeatn,repeatNonGreedy,choice>exact`,
+      ')',
+      actions.groupEnd,
+    ], // group end
 
     // choice
-    [`start,begin,end,groupStart,groupQualifiedStart,exact,repeat0,repeat1,repeat01,repeatn,repeatNonGreedy,choice,${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates}>choice`, '|', actions.choice],
+    [
+      `start,begin,end,groupStart,groupQualifiedStart,exact,repeat0,repeat1,repeat01,repeatn,repeatNonGreedy,choice,${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates}>choice`,
+      '|',
+      actions.choice,
+    ],
 
-    [`start,groupStart,groupQualifiedStart,begin,exact,repeat0,repeat1,repeat01,repeatn,repeatNonGreedy,choice,${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates}>end`, '$', actions.assertEnd],
+    [
+      `start,groupStart,groupQualifiedStart,begin,exact,repeat0,repeat1,repeat01,repeatn,repeatNonGreedy,choice,${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates}>end`,
+      '$',
+      actions.assertEnd,
+    ],
 
     // Charset [HA-HO]
-    [`exact,begin,end,repeat0,repeat1,repeat01,repeatn,repeatNonGreedy,groupQualifiedStart,groupStart,start,choice,${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates}>charsetStart`, '[', actions.charsetStart],
+    [
+      `exact,begin,end,repeat0,repeat1,repeat01,repeatn,repeatNonGreedy,groupQualifiedStart,groupStart,start,choice,${repeatnStates},nullChar,digitBackref,${unicodeEscapeStates},${hexEscapeStates}>charsetStart`,
+      '[',
+      actions.charsetStart,
+    ],
     ['charsetStart>charsetExclude', '^', actions.charsetExclude],
     ['charsetStart>charsetContent', '^\\]^', actions.charsetContent],
     ['charsetExclude>charsetContent', '^\\]', actions.charsetContent], // "[^^]" is valid
@@ -923,8 +1033,10 @@ var config = {
     ['charsetClass>charsetContent', '-', actions.charsetContent],
 
     // Charset Escape
-    [`${charsetIncompleteEscapeStates
-    },charsetStart,charsetContent,charsetNullChar,charsetClass,charsetExclude,charsetRangeEnd>charsetEscape`, '\\'],
+    [
+      `${charsetIncompleteEscapeStates},charsetStart,charsetContent,charsetNullChar,charsetClass,charsetExclude,charsetRangeEnd>charsetEscape`,
+      '\\',
+    ],
     ['charsetEscape>charsetContent', normalEscapeInCharsetEX, actions.charsetNormalEscape],
     ['charsetEscape>charsetNullChar', '0', actions.charsetNullChar],
 
@@ -979,11 +1091,11 @@ var config = {
 
     // [a-\u0-9] means [0-9a-u]
     [`${charsetRangeEndIncompleteEscapeRemainStates}>charsetRangeStart`, '-', actions.charsetContent],
-    [`${charsetIncompleteEscapeStates},${
-      charsetRangeEndIncompleteEscapeStates
-    },charsetNullChar,charsetRangeStart,charsetContent`
-      + ',charsetClass,charsetExclude,charsetRangeEnd>exact',
-    ']'],
+    [
+      `${charsetIncompleteEscapeStates},${charsetRangeEndIncompleteEscapeStates},charsetNullChar,charsetRangeStart,charsetContent` +
+        ',charsetClass,charsetExclude,charsetRangeEnd>exact',
+      ']',
+    ],
   ],
 };
 

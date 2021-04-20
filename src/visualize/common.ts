@@ -10,11 +10,7 @@ import {
   HighlightText,
   GetHighlightTextParams,
 } from '../types/visualize';
-import {
-  EMPTY_NODE,
-  GROUP_NODE,
-  CHOICE_NODE,
-} from '../constants';
+import { EMPTY_NODE, GROUP_NODE, CHOICE_NODE } from '../constants';
 import K from '../Kit';
 
 /**
@@ -23,11 +19,7 @@ import K from '../Kit';
  * @param theme 主题
  */
 export function getTemplateText(paper: RaphaelPaper, theme: Theme): RaphaelElement {
-  const templateText = paper.text(
-    -1000,
-    -1000,
-    'XgfTlM|.q\nXgfTlM|.q',
-  ).attr({
+  const templateText = paper.text(-1000, -1000, 'XgfTlM|.q\nXgfTlM|.q').attr({
     'font-family': theme.fontFamily,
     'font-size': theme.nodeFontSize,
   });
@@ -35,11 +27,7 @@ export function getTemplateText(paper: RaphaelPaper, theme: Theme): RaphaelEleme
 }
 
 const charSizeCache: CharSizeCache = {};
-export function getCharSize({
-  fontSize,
-  fontBold = 'normal',
-  templateText,
-}: GetCharSizeParams): CharSizeCacheItem {
+export function getCharSize({ fontSize, fontBold = 'normal', templateText }: GetCharSizeParams): CharSizeCacheItem {
   if (charSizeCache[fontSize] && charSizeCache[fontSize][fontBold]) {
     return charSizeCache[fontSize][fontBold];
   }
@@ -55,7 +43,7 @@ export function getCharSize({
     width: box.width / ((templateText.attr('text').length - 1) / 2),
     height: box.height / 2,
   };
-  return charSizeCache[fontSize][fontBold]; 
+  return charSizeCache[fontSize][fontBold];
 }
 
 export function charsetEscape(str: string, isRaw?: boolean) {
@@ -64,14 +52,10 @@ export function charsetEscape(str: string, isRaw?: boolean) {
 }
 
 export function onlyCharClass(node) {
-  return !node.chars && !node.ranges.length && node.classes.length === 1;
+  return !node.chars && !node.ranges?.length && node.classes?.length === 1;
 }
 
-export function getHighlightText({
-  str,
-  color,
-  theme,
-}: GetHighlightTextParams): HighlightText {
+export function getHighlightText({ str, color, theme }: GetHighlightTextParams): HighlightText {
   const colorResult = color || theme.highlightColor[str] || theme.highlightColor.defaults;
   return {
     type: 'text',
@@ -117,5 +101,5 @@ export function translate(items, dx, dy) {
 }
 
 export function plural(n: number) {
-  return n + ((n < 2) ? ' time' : ' times');
+  return n + (n < 2 ? ' time' : ' times');
 }

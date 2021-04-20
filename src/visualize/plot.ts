@@ -61,6 +61,7 @@ export function plotTree({ tree, x, y, theme }: PlotParams) {
       x: a.lineOutX,
       y,
       destX: b.lineInX,
+      theme,
     });
     items.push(p);
     return b;
@@ -83,20 +84,21 @@ export const plotNode = {
     point({
       x,
       y,
-      fill: theme.startPointFill,
+      fill: theme?.startPoint?.fill,
     }),
   endPoint: ({ x, y, theme }: PlotNodeParams) =>
     point({
       x,
       y,
-      fill: theme.endPointFill,
+      fill: theme?.endPoint?.fill,
     }),
-  empty: ({ x, y }: PlotNodeParams) => {
+  empty: ({ x, y, theme }: PlotNodeParams) => {
     const len = 10;
     const l = hline({
       x,
       y,
       destX: x + len,
+      theme,
     });
     return {
       items: [l],
@@ -109,7 +111,7 @@ export const plotNode = {
     };
   },
   exact: ({ node, x, y, theme }: PlotNodeParams) => {
-    const color = 'skyblue';
+    const color = theme?.exact?.bgColor;
     return textRect({
       str: node.chars,
       x,
@@ -119,32 +121,32 @@ export const plotNode = {
     });
   },
   dot: ({ x, y, theme }: PlotNodeParams) => {
-    const bgColor = 'DarkGreen';
-    const textColor = 'white';
+    const bgColor = theme.dot.bgColor;
+    const textColor = theme.dot.textColor;
     const a = textRect({
-      str: 'AnyCharExceptNewLine',
+      str: theme.dot.text,
       x,
       y,
       bgColor,
       textColor,
       theme,
     });
-    a.rect.r = 10;
-    a.rect.tip = 'AnyChar except CR LF';
+    a.rect.r = theme.dot.radius;
+    a.rect.tip = theme.dot.tip;
     return a;
   },
   backref: ({ node, x, y, theme }: PlotNodeParams) => {
-    const bgColor = 'navy';
-    const textColor = 'white';
+    const bgColor = theme.backref.bgColor;
+    const textColor = theme.backref.textColor;
     const a = textRect({
-      str: `Backref #${node.num}`,
+      str: `${theme.backref.strPrefix} #${node.num}`,
       x,
       y,
       bgColor,
       textColor,
       theme,
     });
-    a.rect.r = 8;
+    a.rect.r = theme.backref.radius;
     return a;
   },
   repeat: ({ node, x, y, theme }: PlotNodeParams) => {
@@ -155,12 +157,11 @@ export const plotNode = {
         y,
       });
     }
-    const padding = 10;
-    const LABEL_MARGIN = 4;
+    const padding = theme.repeat.padding;
+    const LABEL_MARGIN = theme.repeat.labelMargin;
     const { repeat } = node;
     let txt = '';
     let items = [];
-    const NonGreedySkipPathColor = 'darkgreen';
     /* if (repeat.min===0 && !node._branched) {
       node._branched=true;
       return plotNode.choice({type:CHOICE_NODE,branches:[[{type:EMPTY_NODE}],[node]]},x,y);
@@ -237,12 +238,12 @@ export const plotNode = {
           y,
         ],
         _translate: curveTranslate,
-        stroke: 'maroon',
-        'stroke-width': 2,
+        stroke: theme.repeat.max.greedy.stroke,
+        'stroke-width': theme.repeat.strokeWidth,
       };
       if (repeat.nonGreedy) {
         // txt+="(NonGreedy!)";
-        p.stroke = 'Brownr';
+        p.stroke = theme.repeat.max.nonGreedy.stroke;
         p['stroke-dasharray'] = '-';
       }
       items.push(p);
@@ -295,8 +296,8 @@ export const plotNode = {
           y,
         ],
         _translate: curveTranslate,
-        stroke: repeat.nonGreedy ? NonGreedySkipPathColor : '#333',
-        'stroke-width': 2,
+        stroke: repeat.nonGreedy ? theme.repeat.min.nonGreedy.stroke : theme.repeat.min.greedy.stroke,
+        'stroke-width': theme.repeat.strokeWidth,
       };
       if (p) translate([p], padding, 0);
       items.push(skipPath);
@@ -420,6 +421,7 @@ export const plotNode = {
             x: x + marginX,
             y: lineY,
             destX: dx - a.x + a.lineInX,
+            theme,
           }),
         );
       }
@@ -429,6 +431,7 @@ export const plotNode = {
             x: a.lineOutX + dx - a.x,
             y: lineY,
             destX: x + width - marginX,
+            theme,
           }),
         );
       }
@@ -452,29 +455,23 @@ export const plotNode = {
     const padding = 6;
     const spacing = 4;
     const clsDesc = {
-      d: 'Digit',
-      D: 'NonDigit',
-      w: 'Word',
-      W: 'NonWord',
-      s: 'WhiteSpace',
-      S: 'NonWhiteSpace',
+      d: theme.charset.classDesc.d,
+      D: theme.charset.classDesc.D,
+      w: theme.charset.classDesc.w,
+      W: theme.charset.classDesc.W,
+      s: theme.charset.classDesc.s,
+      S: theme.charset.classDesc.S,
     };
-    const charBgColor = 'LightSkyBlue';
-    const charTextColor = 'black';
-    const clsBgColor = 'Green';
-    const clsTextColor = 'white';
-    const rangeBgColor = 'teal';
-    const rangeTextColor = 'white';
-    const boxColor = node.exclude ? 'Pink' : 'Khaki';
-    const labelColor = node.exclude ? '#C00' : '';
+    const boxColor = node.exclude ? theme.charset.boxColor.exclude : theme.charset.boxColor.include;
+    const labelColor = node.exclude ? theme.charset.labelColor.exclude : theme.charset.labelColor.include;
     const simple = onlyCharClass(node);
     if (simple) {
       const a = textRect({
         str: clsDesc[node.classes[0]],
         x,
         y,
-        bgColor: clsBgColor,
-        textColor: clsTextColor,
+        bgColor: theme.charset.class.bgColor,
+        textColor: theme.charset.class.textColor,
         theme,
       });
       a.rect.r = 5;
@@ -510,8 +507,8 @@ export const plotNode = {
         str: 'AnyChar',
         x,
         y,
-        bgColor: 'green',
-        textColor: 'white',
+        bgColor: theme.charset.anyChar.bgColor,
+        textColor: theme.charset.anyChar.textColor,
         theme,
       });
       a.rect.r = 5;
@@ -526,8 +523,8 @@ export const plotNode = {
         str: node.chars,
         x,
         y,
-        bgColor: charBgColor,
-        textColor: charTextColor,
+        bgColor: theme.charset.char.bgColor,
+        textColor: theme.charset.char.textColor,
         theme,
       });
       ret.rect.r = 5;
@@ -540,8 +537,8 @@ export const plotNode = {
         str: rg,
         x,
         y,
-        bgColor: rangeBgColor,
-        textColor: rangeTextColor,
+        bgColor: theme.charset.range.bgColor,
+        textColor: theme.charset.range.textColor,
         theme,
       });
       ret.rect.r = 5;
@@ -553,8 +550,8 @@ export const plotNode = {
         str: clsDesc[cls],
         x,
         y,
-        bgColor: clsBgColor,
-        textColor: clsTextColor,
+        bgColor: theme.charset.class.bgColor,
+        textColor: theme.charset.class.textColor,
         theme,
       });
       ret.rect.r = 5;
@@ -655,9 +652,9 @@ export const plotNode = {
         theme,
       });
     }
-    const padding = 10;
-    const lineColor = 'silver';
-    const strokeWidth = 2;
+    const padding = theme.group.padding;
+    const lineColor = theme.group.lineColor;
+    const strokeWidth = theme.group.strokeWidth;
     const sub = plotTree({
       tree: node.sub,
       x,
@@ -703,10 +700,22 @@ export const plotNode = {
   },
   assert: ({ node, x, y, theme }: PlotNodeParams) => {
     const simpleAssert = {
-      AssertNonWordBoundary: { bg: 'maroon', fg: 'white' },
-      AssertWordBoundary: { bg: 'purple', fg: 'white' },
-      AssertEnd: { bg: 'Indigo', fg: 'white' },
-      AssertBegin: { bg: 'Indigo', fg: 'white' },
+      AssertNonWordBoundary: {
+        bg: theme.assert.nonWordBoundary.bgColor,
+        fg: theme.assert.nonWordBoundary.textColor,
+      },
+      AssertWordBoundary: {
+        bg: theme.assert.wordBoundary.bgColor,
+        fg: theme.assert.wordBoundary.textColor,
+      },
+      AssertEnd: {
+        bg: theme.assert.end.bgColor,
+        fg: theme.assert.end.textColor,
+      },
+      AssertBegin: {
+        bg: theme.assert.begin.bgColor,
+        fg: theme.assert.begin.textColor,
+      },
     };
     const nat = node.assertionType;
     let txt = `${nat.replace('Assert', '')}!`;
@@ -729,12 +738,12 @@ export const plotNode = {
     let fg;
     const padding = 8;
     if (nat === AssertLookahead) {
-      lineColor = 'CornflowerBlue';
-      fg = 'darkgreen';
+      lineColor = theme.assert.lookahead.lineColor;
+      fg = theme.assert.lookahead.textColor;
       txt = 'Followed by:';
     } else if (nat === AssertNegativeLookahead) {
-      lineColor = '#F63';
-      fg = 'Purple';
+      lineColor = theme.assert.negativeLookahead.lineColor;
+      fg = theme.assert.negativeLookahead.textColor;
       // txt="Negative\nLookahead!"; // break line
       txt = 'Not followed by:';
     }
@@ -751,12 +760,12 @@ export const plotNode = {
       type: 'rect',
       x,
       y: sub.y - padding,
-      r: 6,
+      r: theme.assert.rect.radius,
       width: rectW,
       height: rectH,
       'stroke-dasharray': '-',
       stroke: lineColor,
-      'stroke-width': 2,
+      'stroke-width': theme.assert.rect.strokeWidth,
     };
 
     const tl = textLabel({
