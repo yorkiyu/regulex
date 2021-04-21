@@ -24,10 +24,10 @@ export const gorgeous: Theme = {
     strokeLinejoin: 'round',
   },
   startPoint: {
-    fill: 'r(0.5,0.5)#EFE-#339999',
+    fill: '#339999',
   },
   endPoint: {
-    fill: 'r(0.5,0.5)#FFF-#000',
+    fill: '#000',
   },
   exact: {
     bgColor: '#FF6666',

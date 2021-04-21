@@ -19,10 +19,10 @@ export const normal: Theme = {
     strokeLinejoin: 'round',
   },
   startPoint: {
-    fill: 'r(0.5,0.5)#EFE-green',
+    fill: 'darkgreen',
   },
   endPoint: {
-    fill: 'r(0.5,0.5)#FFF-#000',
+    fill: '#000',
   },
   exact: {
     bgColor: 'skyblue',
