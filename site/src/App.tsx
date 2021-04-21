@@ -40,7 +40,7 @@ export default function App() {
       >
         下载图片
       </Button>
-      <div style={{ marginTop: 20 }} id="raphael" />
+      <div style={{ marginTop: 20, overflowX: 'auto' }} id="raphael" />
     </div>
   );
 }
