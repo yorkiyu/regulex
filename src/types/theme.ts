@@ -46,7 +46,7 @@ export interface Theme {
     labelMargin: number;
     strokeWidth: 2;
     max: {
-      // 贪婪模式
+      // 贪婪模式 线条
       greedy: {
         stroke: string;
       };
@@ -55,7 +55,7 @@ export interface Theme {
       };
     };
     min: {
-      // 贪婪模式
+      // 贪婪模式 线条
       greedy: {
         stroke: string;
       };
@@ -65,14 +65,6 @@ export interface Theme {
     };
   };
   charset: {
-    classDesc: {
-      d: string;
-      D: string;
-      w: string;
-      W: string;
-      s: string;
-      S: string;
-    };
     anyChar: {
       text: string;
       bgColor: string;
@@ -82,6 +74,7 @@ export interface Theme {
       bgColor: string;
       textColor: string;
     };
+    // 字符集类别
     class: {
       bgColor: string;
       textColor: string;
@@ -90,8 +83,11 @@ export interface Theme {
       bgColor: string;
       textColor: string;
     };
+    // 字符集合，背景盒子
     boxColor: {
+      // 不包含 [^]
       exclude: string;
+      // 包含 []
       include: string;
     };
     labelColor: {
@@ -104,31 +100,38 @@ export interface Theme {
     lineColor: string;
     strokeWidth: number;
   };
+  // 边界
   assert: {
     rect: {
       strokeWidth: number;
       radius: number;
     };
+    // 匹配非单词边界 \B
     nonWordBoundary: {
       bgColor: string;
       textColor: string;
     };
+    // 匹配一个单词边界 \b
     wordBoundary: {
       bgColor: string;
       textColor: string;
     };
+    // 结尾 $
     end: {
       bgColor: string;
       textColor: string;
     };
+    // 开头 ^
     begin: {
       bgColor: string;
       textColor: string;
     };
+    // (?=pattern) 匹配后跟随 pattern
     lookahead: {
       lineColor: string;
       textColor: string;
     };
+    // (?!pattern) 匹配后不跟随 pattern
     negativeLookahead: {
       lineColor: string;
       textColor: string;

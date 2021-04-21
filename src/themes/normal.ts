@@ -64,14 +64,6 @@ export const normal: Theme = {
     },
   },
   charset: {
-    classDesc: {
-      d: 'Digit',
-      D: 'NonDigit',
-      w: 'Word',
-      W: 'NonWord',
-      s: 'WhiteSpace',
-      S: 'NonWhiteSpace',
-    },
     anyChar: {
       text: 'AnyChar',
       bgColor: 'green',

@@ -11,14 +11,14 @@ import { Theme } from '../types/theme';
 export const gorgeous: Theme = {
   nodeFontSize: 16,
   labelFontSize: 14,
-  fontFamily: 'Arial',
+  fontFamily: 'monospace',
   pathLen: 16,
   bgColor: '#f0f0f0',
   paperMargin: 10,
   textAnchor: '',
-  fontWeight: 'normal',
+  fontWeight: 'bold',
   line: {
-    stroke: '#000',
+    stroke: '#3a3a3a',
     strokeWidth: 2,
     strokeLinecap: 'butt',
     strokeLinejoin: 'round',
@@ -69,14 +69,6 @@ export const gorgeous: Theme = {
     },
   },
   charset: {
-    classDesc: {
-      d: 'Digit',
-      D: 'NonDigit',
-      w: 'Word',
-      W: 'NonWord',
-      s: 'WhiteSpace',
-      S: 'NonWhiteSpace',
-    },
     anyChar: {
       text: 'AnyChar',
       bgColor: 'green',
@@ -87,25 +79,25 @@ export const gorgeous: Theme = {
       textColor: 'black',
     },
     class: {
-      bgColor: 'Green',
+      bgColor: '#CC3399',
       textColor: 'white',
     },
     range: {
-      bgColor: 'teal',
+      bgColor: '#993399',
       textColor: 'white',
     },
     boxColor: {
-      exclude: 'Pink',
-      include: 'Khaki',
+      exclude: '#FFCCCC',
+      include: '#FFFF99',
     },
     labelColor: {
-      exclude: '#C00',
-      include: '',
+      exclude: '#CC0033',
+      include: '#006633',
     },
   },
   group: {
     padding: 10,
-    lineColor: 'silver',
+    lineColor: '#aaa',
     strokeWidth: 2,
   },
   assert: {
@@ -114,28 +106,28 @@ export const gorgeous: Theme = {
       radius: 6,
     },
     nonWordBoundary: {
-      bgColor: 'maroon',
+      bgColor: '#990066',
       textColor: 'white',
     },
     wordBoundary: {
-      bgColor: 'purple',
+      bgColor: '#CC6699',
       textColor: 'white',
     },
     end: {
-      bgColor: 'Indigo',
+      bgColor: '#003399',
       textColor: 'white',
     },
     begin: {
-      bgColor: 'Indigo',
+      bgColor: '#003399',
       textColor: 'white',
     },
     lookahead: {
-      lineColor: 'CornflowerBlue',
-      textColor: 'darkgreen',
+      lineColor: '#FF9900',
+      textColor: '#CC6600',
     },
     negativeLookahead: {
-      lineColor: '#F63',
-      textColor: 'Purple',
+      lineColor: '#660066',
+      textColor: '#993366',
     },
   },
   highlightColor: {

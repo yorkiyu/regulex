@@ -4,7 +4,7 @@ import vregexp from '@v-regexp';
 
 export default function App() {
   const { parse, visualize, download } = vregexp;
-  const regexp = /^var\s+([a-zA-Z_]{2,5}\w*);.{0,3}(a|b|[\u4e00-\u9fa5]+Jack(?=Sprat))(?:foo){1,2}$/;
+  const regexp = /^d\dvar\b\s+([^a-zA-Z_]{2,5}\w*);.{0,3}(a|b\B|[\u4e00-\u9fa5]+Jack(?=Sprat)|name(?!foo)){1,2}$/;
   const [paper, setPaper] = useState(null);
   const [theme, setTheme] = useState<any>('normal');
 

@@ -457,12 +457,12 @@ export const plotNode = {
     const padding = 6;
     const spacing = 4;
     const clsDesc = {
-      d: theme.charset.classDesc.d,
-      D: theme.charset.classDesc.D,
-      w: theme.charset.classDesc.w,
-      W: theme.charset.classDesc.W,
-      s: theme.charset.classDesc.s,
-      S: theme.charset.classDesc.S,
+      d: 'Digit',
+      D: 'NonDigit',
+      w: 'Word',
+      W: 'NonWord',
+      s: 'WhiteSpace',
+      S: 'NonWhiteSpace',
     };
     const boxColor = node.exclude ? theme.charset.boxColor.exclude : theme.charset.boxColor.include;
     const labelColor = node.exclude ? theme.charset.labelColor.exclude : theme.charset.labelColor.include;
@@ -702,18 +702,22 @@ export const plotNode = {
   },
   assert: ({ node, x, y, theme }: PlotNodeParams) => {
     const simpleAssert = {
+      // 匹配非单词边界 \B
       AssertNonWordBoundary: {
         bg: theme.assert.nonWordBoundary.bgColor,
         fg: theme.assert.nonWordBoundary.textColor,
       },
+      // 匹配一个单词边界 \b
       AssertWordBoundary: {
         bg: theme.assert.wordBoundary.bgColor,
         fg: theme.assert.wordBoundary.textColor,
       },
+      // 结尾 $
       AssertEnd: {
         bg: theme.assert.end.bgColor,
         fg: theme.assert.end.textColor,
       },
+      // 开头 ^
       AssertBegin: {
         bg: theme.assert.begin.bgColor,
         fg: theme.assert.begin.textColor,
