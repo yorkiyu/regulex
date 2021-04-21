@@ -407,12 +407,14 @@ export const plotNode = {
         fromY: y,
         toX: x + marginX,
         toY: lineY,
+        theme,
       });
       const p2 = smoothLine({
         fromX: lineOutX,
         fromY: y,
         toX: x + width - marginX,
         toY: lineY,
+        theme,
       });
       items.push(p1, p2);
       if (x + marginX !== dx - a.x + a.lineInX) {
@@ -504,7 +506,7 @@ export const plotNode = {
     if (!node.chars && !node.ranges.length && !node.classes.length) {
       // It must be exclude charset here
       const a = textRect({
-        str: 'AnyChar',
+        str: theme.charset.anyChar.text,
         x,
         y,
         bgColor: theme.charset.anyChar.bgColor,

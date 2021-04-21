@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { Radio, Button } from 'antd';
 import vregexp from '@v-regexp';
 
 export default function App() {
   const { parse, visualize, download } = vregexp;
-  const regexp = /^var\s+([a-zA-Z_]{2,5}\w*);.{0,3}(a|b|[\u4e00-\u9fa5]+)$/;
+  const regexp = /^var\s+([a-zA-Z_]{2,5}\w*);.{0,3}(a|b|[\u4e00-\u9fa5]+Jack(?=Sprat))(?:foo){1,2}$/;
   const [paper, setPaper] = useState(null);
+  const [theme, setTheme] = useState<any>('normal');
 
   useEffect(() => {
     const regexpParse = parse(regexp.source);
@@ -12,21 +14,33 @@ export default function App() {
       regexpParse,
       flags: 'gmi',
       containerId: 'raphael',
+      themeOption: theme,
     });
     setPaper(p);
-  }, []);
+  }, [theme]);
 
   return (
-    <>
-      <div id="raphael" />
-      <button
-        type="button"
+    <div style={{ padding: 20 }}>
+      <Radio.Group
+        style={{ marginRight: 20 }}
+        options={[
+          { label: 'normal', value: 'normal' },
+          { label: 'gorgeous', value: 'gorgeous' },
+        ]}
+        onChange={(e) => {
+          setTheme(e.target.value);
+        }}
+        value={theme}
+        optionType="button"
+      />
+      <Button
         onClick={() => {
           download.png(paper, regexp.source);
         }}
       >
         下载图片
-      </button>
-    </>
+      </Button>
+      <div style={{ marginTop: 20 }} id="raphael" />
+    </div>
   );
 }

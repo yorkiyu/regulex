@@ -30,6 +30,10 @@ module.exports = {
         use: 'ts-loader',
         exclude: /node_modules/,
       },
+      {
+        test: /\.(less|css)$/,
+        use: ['style-loader', 'css-loader', 'less-loader'],
+      },
     ],
   },
   plugins: [

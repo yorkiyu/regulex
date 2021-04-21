@@ -6,6 +6,18 @@ import { getCharSize, getHighlightText, getTemplateText, translate } from './com
 import { highlight } from './highlight';
 import { plot } from './plot';
 
+// 同一个containerId的图形，需使用同一paper
+const paperChache: { [propName: string]: RaphaelPaper } = {};
+
+function getPaper(containerId: string): RaphaelPaper {
+  let paper = paperChache[containerId];
+  if (!paper) {
+    paper = raphael(containerId, 0, 0);
+    paperChache[containerId] = paper;
+  }
+  return paper;
+}
+
 export default function visualize({
   regexpParse,
   flags,
@@ -13,7 +25,7 @@ export default function visualize({
   containerId,
 }: VisualizeParams): RaphaelPaper {
   const theme: Theme = typeof themeOption === 'string' ? themes[themeOption] : themeOption;
-  const paper = raphael(containerId, 0, 0);
+  const paper = getPaper(containerId);
   paper.clear();
   paper.setSize(0, 0);
   const bg = paper.rect(0, 0, 0, 0);
@@ -77,7 +89,7 @@ export default function visualize({
   }, startX);
   width += theme.paperMargin;
   height = charSize.height + theme.paperMargin * 2;
-  // @ts-ignore
+  // @ts-ignore 图形顶部，显示正则表达式，字符串高亮语法
   texts = paper.add(texts);
 
   paper.setSize(width, charSize.height + theme.paperMargin * 2);

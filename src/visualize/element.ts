@@ -99,10 +99,10 @@ export function hline({ x, y, destX, theme }: HlineParams): ElementHline {
     x,
     y,
     path: ['M', x, y, 'H', destX],
-    'stroke-linecap': 'butt',
-    'stroke-linejoin': 'round',
-    stroke: theme.hline.stroke,
-    'stroke-width': theme.hline.strokeWidth,
+    'stroke-linecap': theme.line.strokeLinecap,
+    'stroke-linejoin': theme.line.strokeLinejoin,
+    stroke: theme.line.stroke,
+    'stroke-width': theme.line.strokeWidth,
     _translate(x, y) {
       const p = this.path;
       p[1] += x;
@@ -112,7 +112,7 @@ export function hline({ x, y, destX, theme }: HlineParams): ElementHline {
   };
 }
 
-export function smoothLine({ fromX, fromY, toX, toY }: SmoothLineParams): ElementSmoothLine {
+export function smoothLine({ fromX, fromY, toX, toY, theme }: SmoothLineParams): ElementSmoothLine {
   const radius = 10;
   let path;
   let translate;
@@ -182,10 +182,10 @@ export function smoothLine({ fromX, fromY, toX, toY }: SmoothLineParams): Elemen
   return {
     type: 'path',
     path,
-    'stroke-linecap': 'butt',
-    'stroke-linejoin': 'round',
-    stroke: '#333',
-    'stroke-width': 2,
+    'stroke-linecap': theme.line.strokeLinecap,
+    'stroke-linejoin': theme.line.strokeLinejoin,
+    stroke: theme.line.stroke,
+    'stroke-width': theme.line.strokeWidth,
     _translate: translate,
   };
 }

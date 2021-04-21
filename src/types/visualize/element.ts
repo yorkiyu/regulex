@@ -103,6 +103,7 @@ export interface SmoothLineParams {
   fromY?: number;
   toX?: number;
   toY?: number;
+  theme: Theme;
 }
 
 export interface PointParams {

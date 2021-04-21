@@ -1,34 +1,39 @@
+/**
+ * 配色参考：https://peiseka.com/webpeise.html#ps16
+ * 华丽、花哨、女性化
+ * */
+
 import { Theme } from '../types/theme';
 
 /**
  * 常规主题
  */
-export const normal: Theme = {
+export const gorgeous: Theme = {
   nodeFontSize: 16,
   labelFontSize: 14,
-  fontFamily: 'DejaVu Sans Mono,monospace',
+  fontFamily: 'Arial',
   pathLen: 16,
-  bgColor: '#eee',
+  bgColor: '#f0f0f0',
   paperMargin: 10,
   textAnchor: '',
-  fontWeight: 'bold',
+  fontWeight: 'normal',
   line: {
-    stroke: '#333',
+    stroke: '#000',
     strokeWidth: 2,
     strokeLinecap: 'butt',
     strokeLinejoin: 'round',
   },
   startPoint: {
-    fill: 'r(0.5,0.5)#EFE-green',
+    fill: 'r(0.5,0.5)#EFE-#339999',
   },
   endPoint: {
     fill: 'r(0.5,0.5)#FFF-#000',
   },
   exact: {
-    bgColor: 'skyblue',
+    bgColor: '#FF6666',
   },
   dot: {
-    bgColor: 'DarkGreen',
+    bgColor: '#663366',
     textColor: 'white',
     text: 'AnyCharExceptNewLine',
     tip: 'AnyChar except CR LF',
@@ -47,19 +52,19 @@ export const normal: Theme = {
     max: {
       // 贪婪模式
       greedy: {
-        stroke: 'maroon',
+        stroke: '#339999',
       },
       nonGreedy: {
-        stroke: 'Brownr',
+        stroke: '#66CC99',
       },
     },
     min: {
       // 贪婪模式
       greedy: {
-        stroke: '#333',
+        stroke: '#666699',
       },
       nonGreedy: {
-        stroke: 'darkgreen',
+        stroke: '#99CC66',
       },
     },
   },

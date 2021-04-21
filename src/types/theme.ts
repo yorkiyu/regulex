@@ -11,9 +11,11 @@ export interface Theme {
   textAnchor?: string;
   fontWeight?: string | number;
   // 可视化图形，横轴线
-  hline: {
+  line: {
     stroke: string;
     strokeWidth: number;
+    strokeLinecap: string;
+    strokeLinejoin: string;
   };
   startPoint: {
     fill: string;
@@ -21,9 +23,11 @@ export interface Theme {
   endPoint: {
     fill: string;
   };
+  // 精确匹配
   exact: {
     bgColor: string;
   };
+  // /./ 任意字符匹配
   dot: {
     bgColor: string;
     textColor: string;
@@ -70,6 +74,7 @@ export interface Theme {
       S: string;
     };
     anyChar: {
+      text: string;
       bgColor: string;
       textColor: string;
     };
@@ -137,6 +142,8 @@ export interface Global {
   multiLine?: boolean;
   templateText?: RaphaelElement;
 }
+
+// 图形顶部，显示正则表达式，字符串高亮语法
 export interface HighlightColor {
   delimiter?: string;
   flags?: string;
